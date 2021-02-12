@@ -6,6 +6,10 @@
 from sqlalchemy import Table, Column, Integer, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
+
+STATUS_INACTIVE = 0
+STATUS_ACTIVE = 1
+
 convention = {
               "all_column_names": lambda constraint,
                                   table: "_".join([
@@ -34,9 +38,9 @@ class CAncestor(Base):
                      nullable=False,
                      )
 
-    def __init__(self, pstatus):
+    def __init__(self):
         """Конструктор."""
-        self.fstatus = pstatus
+        self.fstatus = STATUS_ACTIVE
         
     def __repr__(self):
         
