@@ -1,24 +1,16 @@
 #! /usr/bin/python3
 ## -*- coding: utf-8 -*-
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.ru
-"""Qt оболочка для forget-me-not."""
+""" Органайзер задач. """
 import sys
 from pathlib import Path
-# import shutil
-# from datetime import datetime
 from PyQt5 import QtWidgets, QtGui
 from PyQt5 import uic
-
-# import c_config as cfg
-# import c_constants as const
-# import c_database as db
-# import c_eventslist as evlst
-# import c_eventtypeslist as evtypelst
-# import c_tools as tls
     
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
 FORM_FOLDER = "ui/"
+HEADER_TEXT = "Ты должен делать то, что должен."
 
 class CMainWindow(QtWidgets.QMainWindow):
     """Класс."""
@@ -26,9 +18,15 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Конструктор класса."""
         super(CMainWindow, self).__init__()
         self.application_folder = Path.cwd()
+        # *** Интерфейс
         ui_folder = self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM
-        print("*** MW:IN:fold", ui_folder)
         uic.loadUi(self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM, self)
+
+        # *** БД
+        db_folder = Path(Path.home() / ALL_CONFIGS_FOLDER)
+        db_folder_path = Path()
+        return config_folder_path.exists()
+        
         # text_font = QtGui.QFont()
         # text_font.setPointSize(text_font.pointSize()+3)
         # self.textBrowser.setFont(text_font)
@@ -45,7 +43,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         #self.backup_need = False
         #PROGRAM_VERSION
         
-        window_title = self.windowTitle() + f" ver. {PROGRAM_VERSION}"
+        window_title = f"Task organizer ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\""
         self.setWindowTitle(window_title)
         #self.setWindowIcon(QtGui.QIcon('ui/forget-me-not.ico'))
         self.update()
