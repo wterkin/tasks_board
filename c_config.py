@@ -5,18 +5,12 @@
 from pathlib import Path
 import json
 
+APP_NAME = "tasks_board"
 ALL_CONFIGS_FOLDER = ".config/"
-CONFIG_FOLDER = ".config/forget-me-not/" 
-CONFIG_FILE_NAME = "forget-me-not.json"
-DATABASE_FILE_NAME = "forget-me-not.db"
+CONFIG_FOLDER = f"{ALL_CONFIGS_FOLDER}/{APP_NAME}/" 
+CONFIG_FILE_NAME = f"{APP_NAME}.json"
+DATABASE_FILE_NAME = f"{APP_NAME}.db"
 DATABASE_FILE_KEY = "database_file_name"
-MONITORING_PERIOD_KEY= "monitoring_period"
-MAX_BACKUP_FILES_KEY = "max_backup_files"
-TOMORROW_SIGN_KEY = "tomorrow_sign"
-TODAY_SIGN_KEY = "today_sign"
-YESTERDAY_SIGN_KEY = "yesterday_sign"
-FUTURE_SIGN_KEY = "future_sign"
-BACKGROUND_COLOR_KEY = "background_color"
 
 
 class CConfiguration(object):
@@ -46,33 +40,10 @@ class CConfiguration(object):
             self.store_value(DATABASE_FILE_KEY, 
                              str(Path.home() / CONFIG_FOLDER / DATABASE_FILE_NAME))
             self.write_config()
-        if not MONITORING_PERIOD_KEY in self.config:
+        # if not MAX_BACKUP_FILES_KEY in self.config:
         
-            self.store_value(MONITORING_PERIOD_KEY,  21)
-            self.write_config()
-        if not MAX_BACKUP_FILES_KEY in self.config:
-        
-            self.store_value(MAX_BACKUP_FILES_KEY, 5)
-            self.write_config()
-        if not FUTURE_SIGN_KEY in self.config:
-
-            self.store_value(FUTURE_SIGN_KEY, "🕒")
-            self.write_config()
-        if not TOMORROW_SIGN_KEY in self.config:
-
-            self.store_value(TOMORROW_SIGN_KEY, "▲")
-            self.write_config()
-        if not TODAY_SIGN_KEY in self.config:
-
-            self.store_value(TODAY_SIGN_KEY, "►")
-            self.write_config()
-        if not YESTERDAY_SIGN_KEY in self.config:
-
-            self.store_value(YESTERDAY_SIGN_KEY, "▼")
-            self.write_config()
-        if not BACKGROUND_COLOR_KEY in self.config:
-            self.store_value(BACKGROUND_COLOR_KEY, "#3F3F3F")
-            self.write_config()
+            # self.store_value(MAX_BACKUP_FILES_KEY, 5)
+            # self.write_config()
             
     
     def store_value(self, pkey, pvalue):
