@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 
+import c_ancestor as anc
     
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -25,6 +26,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Конструктор класса."""
         super(CMainWindow, self).__init__()
         self.application_folder = Path.cwd()
+        
         # *** Интерфейс
         ui_folder = self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM
         uic.loadUi(self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM, self)
@@ -32,6 +34,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         # *** БД
         # db_folder = Path(Path.home() / ALL_CONFIGS_FOLDER)
         # db_folder_path = Path()
+        
         # *** Конфигурация
         self.config = cfg.CConfiguration()
         # *** База данных
@@ -54,13 +57,14 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.show()
 
 
-    def __db_connect():
+    def __db_connect(self):
         """Устанавливает соединение с БД."""
         self.engine = create_engine('sqlite:///'+self.config.restore_value(c_config.DATABASE_FILE_KEY))
         Session = sessionmaker()
         Session.configure(bind=self.engine)
         self.session = Session()
-        c_ancestor.Base.metadata.bind = self.engine
+        anc.Base.metadata.bind = self.engine
+
 
     def __db_create(self):
         """Создает или изменяет БД в соответствии с описанной в классах структурой."""
@@ -73,6 +77,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         if count == 0:
 
             self.fill_periods_table()
+
 
     def __db_exists(self):
         """Проверяет наличие базы данных по пути в конфигурации."""
