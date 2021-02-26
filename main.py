@@ -14,6 +14,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 
 import c_ancestor as anc
+import c_config as cfg
+
     
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -38,9 +40,9 @@ class CMainWindow(QtWidgets.QMainWindow):
         # *** Конфигурация
         self.config = cfg.CConfiguration()
         # *** База данных
-        if not self.__is_database_exists():
+        if not self.__db_exists():
         
-            self.database.create_database()
+            self.__db_create()
 
         #self.database = db.CDatabase(self.config)
         #if not self.__is_database_exists():
@@ -68,15 +70,15 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def __db_create(self):
         """Создает или изменяет БД в соответствии с описанной в классах структурой."""
-        c_ancestor.Base.metadata.create_all()
-        count = self.session.query(c_eventtype.CEventType).count()
-        if count == 0:
+        anc.Base.metadata.create_all()
+        #count = self.session.query(c_eventtype.CEventType).count()
+        #if count == 0:
 
-            self.fill_event_types_table()
-        count = self.session.query(c_period.CPeriod).count()
-        if count == 0:
+            #self.fill_event_types_table()
+        #count = self.session.query(c_period.CPeriod).count()
+        #if count == 0:
 
-            self.fill_periods_table()
+            #self.fill_periods_table()
 
 
     def __db_exists(self):
