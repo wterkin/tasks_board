@@ -6,7 +6,7 @@ import sys
 
 from pathlib import Path
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5 import uic
 
 from sqlalchemy import create_engine
@@ -15,7 +15,9 @@ from sqlalchemy import and_, or_
 
 import c_ancestor as anc
 import c_config as cfg
-
+import c_context as ctx
+import c_tag as tag
+import c_task as tsk  # =)
     
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -33,35 +35,49 @@ class CMainWindow(QtWidgets.QMainWindow):
         ui_folder = self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM
         uic.loadUi(self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM, self)
 
-        # *** БД
-        # db_folder = Path(Path.home() / ALL_CONFIGS_FOLDER)
-        # db_folder_path = Path()
-        
         # *** Конфигурация
         self.config = cfg.CConfiguration()
+
         # *** База данных
+        self.__db_connect()
         if not self.__db_exists():
-        
             self.__db_create()
-
-        #self.database = db.CDatabase(self.config)
-        #if not self.__is_database_exists():
-
-            #self.database.create_database()
-        #self.database.cleanup()
-        #self.backup_need = False
-        #PROGRAM_VERSION
-        
-        window_title = f"Task organizer ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\""
+        window_title = f"Tasks board ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\""
         self.setWindowTitle(window_title)
-        #self.setWindowIcon(QtGui.QIcon('ui/forget-me-not.ico'))
-        self.update()
+        self.setWindowIcon(QtGui.QIcon('ui/tasks_board.ico'))
+        # self.update()
+        # *** Компоненты
+        # comboBox_Contexts
+        # lineEdit_TagsFilter
+        # lineEdit_TextFilter
+        # checkBox_ShowCompleted
+        # checkBox_ShowDeleted
+        # lineEdit_Tags
+        # spinBox_Urgency
+        # lineEdit_Task
+        # tableWidget_Tasks
+        # statusBar
+        # toolButton_TagsFilter
+        # toolButton_TextFilter
+        # toolButton_Quit
+        # toolButton_Apply
+        # *** Обработчики
+        self.toolButton_Apply.clicked.connect(self.__save_task)
+        self.toolButton_TagsFilter.clicked.connect(self.__set_tags_filter)
+        self.toolButton_TextFilter.clicked.connect(self.__set_text_filter)
+        self.pushButton_AddTask.clicked.connect(self.__add_task)
+        self.pushButton_DeleteTask.clicked.connect(self.__delete_task)
         self.show()
+
+    
+    def __add_task(self):
+        """Добавляет новую задачу"""
+        pass
 
 
     def __db_connect(self):
         """Устанавливает соединение с БД."""
-        self.engine = create_engine('sqlite:///'+self.config.restore_value(c_config.DATABASE_FILE_KEY))
+        self.engine = create_engine('sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY))
         Session = sessionmaker()
         Session.configure(bind=self.engine)
         self.session = Session()
@@ -71,14 +87,6 @@ class CMainWindow(QtWidgets.QMainWindow):
     def __db_create(self):
         """Создает или изменяет БД в соответствии с описанной в классах структурой."""
         anc.Base.metadata.create_all()
-        #count = self.session.query(c_eventtype.CEventType).count()
-        #if count == 0:
-
-            #self.fill_event_types_table()
-        #count = self.session.query(c_period.CPeriod).count()
-        #if count == 0:
-
-            #self.fill_periods_table()
 
 
     def __db_exists(self):
@@ -86,7 +94,36 @@ class CMainWindow(QtWidgets.QMainWindow):
         db_folder_path = Path(self.config.restore_value(cfg.DATABASE_FILE_KEY))
         return db_folder_path.exists()
 
+    
+    def __delete_task(self):
+        """Удаляет задачу"""
+        pass
+
+
+    def __save_task(self):
+        """Сохраняет введённую задачу."""
+        pass
+
+
+    def __set_tags_filter(self):
+        """Включает или выключает фильтрацию по тегам."""
+        pass
+
+    
+    def __set_text_filter(self):
+        """Включает или выключает фильтрацию по тексту задачи."""
+        pass
         
+
+    def keyPressEvent(self, event):
+        """Отлавливает нажатие Ctrl-Q."""
+        if (event.modifiers() & QtCore.Qt.ControlModifier):
+        
+            if event.key() == QtCore.Qt.Key_Q:
+            
+                self.close()
+
+
 if __name__ == '__main__':
     application = QtWidgets.QApplication(sys.argv)
     main_window = CMainWindow()
