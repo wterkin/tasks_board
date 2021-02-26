@@ -82,6 +82,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         anc.Base.metadata.create_all()
 
 
+
     def __db_exists(self):
         """Проверяет наличие базы данных по пути в конфигурации."""
         db_folder_path = Path(self.config.restore_value(cfg.DATABASE_FILE_KEY))
