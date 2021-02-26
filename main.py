@@ -6,7 +6,7 @@ import sys
 
 from pathlib import Path
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5 import uic
 
 from sqlalchemy import create_engine
@@ -43,11 +43,10 @@ class CMainWindow(QtWidgets.QMainWindow):
         if not self.__db_exists():
         
             self.__db_create()
-        # self.session = None
         
         window_title = f"Tasks board ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\""
         self.setWindowTitle(window_title)
-        # self.setWindowIcon(QtGui.QIcon('ui/forget-me-not.ico'))
+        self.setWindowIcon(QtGui.QIcon('ui/tasks_board.ico'))
         # self.update()
         # *** Компоненты
         # comboBox_Contexts
@@ -60,11 +59,16 @@ class CMainWindow(QtWidgets.QMainWindow):
         # lineEdit_Task
         # tableWidget_Tasks
         # statusBar
-        # *** Обработчики
         # toolButton_TagsFilter
         # toolButton_TextFilter
         # toolButton_Quit
         # toolButton_Apply
+        # *** Обработчики
+        self.toolButton_Apply.clicked.connect(self.__save_task)
+        self.toolButton_TagsFilter.clicked.connect(self.__set_tags_filter)
+        self.toolButton_TextFilter.clicked.connect(self.__set_text_filter)
+        # self.pushButton_AddTask
+        # self.pushButton_DeleteTask
         self.show()
 
 
@@ -82,12 +86,34 @@ class CMainWindow(QtWidgets.QMainWindow):
         anc.Base.metadata.create_all()
 
 
-
     def __db_exists(self):
         """Проверяет наличие базы данных по пути в конфигурации."""
         db_folder_path = Path(self.config.restore_value(cfg.DATABASE_FILE_KEY))
         return db_folder_path.exists()
 
+
+    def __save_task(self):
+        """Сохраняет введённую задачу."""
+        pass
+
+
+    def __set_tags_filter(self):
+        """Включает или выключает фильтрацию по тегам."""
+        pass
+
+    
+    def __set_text_filter(self):
+        """Включает или выключает фильтрацию по тексту задачи."""
+        pass
+        
+
+    def keyPressEvent(self, event):
+        """Отлавливает нажатие Ctrl-Q."""
+        if (event.modifiers() & QtCore.Qt.ControlModifier):
+        
+            if event.key() == QtCore.Qt.Key_Q: #keyboard
+            
+                self.close()
         
 if __name__ == '__main__':
     application = QtWidgets.QApplication(sys.argv)
