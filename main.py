@@ -13,6 +13,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 
+import c_ancestor as anc
+import c_config as cfg
+import c_context as ctx
+import c_tag as tag
+import c_task as tsk  # =)
     
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -25,54 +30,57 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Конструктор класса."""
         super(CMainWindow, self).__init__()
         self.application_folder = Path.cwd()
+        
         # *** Интерфейс
         ui_folder = self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM
         uic.loadUi(self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM, self)
 
-        # *** БД
-        # db_folder = Path(Path.home() / ALL_CONFIGS_FOLDER)
-        # db_folder_path = Path()
         # *** Конфигурация
         self.config = cfg.CConfiguration()
+
         # *** База данных
-        if not self.__is_database_exists():
+        self.__db_connect()
+        if not self.__db_exists():
         
-            self.database.create_database()
-
-        #self.database = db.CDatabase(self.config)
-        #if not self.__is_database_exists():
-
-            #self.database.create_database()
-        #self.database.cleanup()
-        #self.backup_need = False
-        #PROGRAM_VERSION
+            self.__db_create()
+        # self.session = None
         
-        window_title = f"Task organizer ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\""
+        window_title = f"Tasks board ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\""
         self.setWindowTitle(window_title)
-        #self.setWindowIcon(QtGui.QIcon('ui/forget-me-not.ico'))
-        self.update()
+        # self.setWindowIcon(QtGui.QIcon('ui/forget-me-not.ico'))
+        # self.update()
+        # *** Компоненты
+        # comboBox_Contexts
+        # lineEdit_TagsFilter
+        # lineEdit_TextFilter
+        # checkBox_ShowCompleted
+        # checkBox_ShowDeleted
+        # lineEdit_Tags
+        # spinBox_Urgency
+        # lineEdit_Task
+        # tableWidget_Tasks
+        # statusBar
+        # *** Обработчики
+        # toolButton_TagsFilter
+        # toolButton_TextFilter
+        # toolButton_Quit
+        # toolButton_Apply
         self.show()
 
 
-    def __db_connect():
+    def __db_connect(self):
         """Устанавливает соединение с БД."""
-        self.engine = create_engine('sqlite:///'+self.config.restore_value(c_config.DATABASE_FILE_KEY))
+        self.engine = create_engine('sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY))
         Session = sessionmaker()
         Session.configure(bind=self.engine)
         self.session = Session()
-        c_ancestor.Base.metadata.bind = self.engine
+        anc.Base.metadata.bind = self.engine
+
 
     def __db_create(self):
         """Создает или изменяет БД в соответствии с описанной в классах структурой."""
-        c_ancestor.Base.metadata.create_all()
-        count = self.session.query(c_eventtype.CEventType).count()
-        if count == 0:
+        anc.Base.metadata.create_all()
 
-            self.fill_event_types_table()
-        count = self.session.query(c_period.CPeriod).count()
-        if count == 0:
-
-            self.fill_periods_table()
 
     def __db_exists(self):
         """Проверяет наличие базы данных по пути в конфигурации."""
