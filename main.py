@@ -114,16 +114,25 @@ class CMainWindow(QtWidgets.QMainWindow):
         tag_name_list = entered_tags.split()
         # *** Поищем введенные теги в базе
         tag_id_list = []
+        # *** Переберем полученные теги
         for tag in tag_name_list:
             
+            # *** Получим ID тега
             tag_id = self.session.query(tag.CTag.id).filter_by(fname=tag).first()
-            if tag_id is not None:
+            if tag_id is None:
+                
+                # *** Тега такого еще нет в базе, добавляем
+                tag_object = tag.CTag(tag)
+                self.session.add(tag_object)
+                # *** И снова ищем. 
+                tag_id = self.session.query(tag.CTag.id).filter_by(fname=tag).first()
             
-                tag_id_list.append(tag_id)
-                tag_index = tag_name_list.index(tag)
-                del tag_name_list[tag_index]
-        
+            # *** Заносим ID тега в список и удаляем его из списка необработанных тегов
+            tag_id_list.append(tag_id)
+            tag_index = tag_name_list.index(tag)
+            del tag_name_list[tag_index]
 
+            
 
     def __set_tags_filter(self):
         """Включает или выключает фильтрацию по тегам."""
