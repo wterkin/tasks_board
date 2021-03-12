@@ -14,6 +14,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_, or_
 
+from alembic.config import Config
+from alembic import command, autogenerate
+from alembic.script import ScriptDirectory
+from alembic.runtime.environment import EnvironmentContext
+
 import c_ancestor as anc
 import c_config as cfg
 import c_context as ctx
@@ -70,14 +75,34 @@ class CMainWindow(QtWidgets.QMainWindow):
         # self.update()
         self.show()
 
-    
+
+    def __db_alembic_setup(self):
+        """Создает среду алембика."""
+        migrations_path = Path(Path.home() / ALL_CONFIGS_FOLDER)
+        if not all_configs_folder_path.exists():
+
+            all_configs_folder_path.mkdir()
+        alembic_config = Config()
+        alembic_config.set_main_option("script_location", "migrations")
+        alembic_config.set_main_option("url", 'sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY))
+        self.alembic_script = ScriptDirectory.from_config(alembic_config)
+        self.alembic_env = EnvironmentContext(alembic_config, alembic_script)
+        self.alembic_env.configure(connection=self.engine.connect(), target_metadata=anc.Base.metadata, fn=self.__db_upgrade)
+        self.alembic_context = self.alembic_env.get_context()
+
+
+    def __db_check(self):
+        """Проверяет базу на соответствие ее структуры классам."""
+
+
     def __db_connect(self):
         """Устанавливает соединение с БД."""
-        self.engine = create_engine('sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY))
+        self.engine = create_engine('sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY), echo=True)
         Session = sessionmaker()
         Session.configure(bind=self.engine)
         self.session = Session()
         anc.Base.metadata.bind = self.engine
+        self.__db_alembic_setup()
 
 
     def __db_create(self):
@@ -95,6 +120,11 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Проверяет наличие базы данных по пути в конфигурации."""
         db_folder_path = Path(self.config.restore_value(cfg.DATABASE_FILE_KEY))
         return db_folder_path.exists()
+
+
+    def __db_upgrade(self, revision, context):
+        """Приводит структуру базы в соответствие с классами Alchemy."""
+        return self.alembic_script._upgrade_revs(script.get_heads(), revision)
 
 
     def __delete_task(self):
@@ -132,7 +162,6 @@ class CMainWindow(QtWidgets.QMainWindow):
             tag_index = tag_name_list.index(tag)
             del tag_name_list[tag_index]
 
-            
 
     def __set_tags_filter(self):
         """Включает или выключает фильтрацию по тегам."""
