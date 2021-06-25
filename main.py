@@ -19,11 +19,11 @@ from alembic import command, autogenerate
 from alembic.script import ScriptDirectory
 from alembic.runtime.environment import EnvironmentContext
 
-import c_ancestor as anc
-import c_config as cfg
-import c_context as ctx
-import c_tag as tag
-import c_task as tsk  # =)
+import c_ancestor as canc
+import c_config as ccfg
+import c_context as cctx
+import c_tag as ctag
+import c_task as ctsk  # =)
     
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -44,7 +44,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon('ui/tasks_board.ico'))
 
         # *** Конфигурация
-        self.config = cfg.CConfiguration()
+        self.config = ccfg.CConfiguration()
 
         # *** База данных
         self.__db_connect()
@@ -78,16 +78,16 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def __db_alembic_setup(self):
         """Создает среду алембика."""
-        migrations_path = Path(Path.home() / ALL_CONFIGS_FOLDER)
-        if not all_configs_folder_path.exists():
+        migrations_path = Path(Path.home() / ccfg.ALL_CONFIGS_FOLDER)
+        if not migrations_path.exists():
 
-            all_configs_folder_path.mkdir()
+            migrations_path.mkdir()
         alembic_config = Config()
         alembic_config.set_main_option("script_location", "migrations")
-        alembic_config.set_main_option("url", 'sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY))
+        alembic_config.set_main_option("url", 'sqlite:///'+self.config.restore_value(ccfg.DATABASE_FILE_KEY))
         self.alembic_script = ScriptDirectory.from_config(alembic_config)
-        self.alembic_env = EnvironmentContext(alembic_config, alembic_script)
-        self.alembic_env.configure(connection=self.engine.connect(), target_metadata=anc.Base.metadata, fn=self.__db_upgrade)
+        self.alembic_env = EnvironmentContext(alembic_config, self. alembic_script)
+        self.alembic_env.configure(connection=self.engine.connect(), target_metadata=canc.Base.metadata, fn=self.__db_upgrade)
         self.alembic_context = self.alembic_env.get_context()
 
 
@@ -97,17 +97,17 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def __db_connect(self):
         """Устанавливает соединение с БД."""
-        self.engine = create_engine('sqlite:///'+self.config.restore_value(cfg.DATABASE_FILE_KEY), echo=True)
+        self.engine = create_engine('sqlite:///'+self.config.restore_value(ccfg.DATABASE_FILE_KEY), echo=True)
         Session = sessionmaker()
         Session.configure(bind=self.engine)
         self.session = Session()
-        anc.Base.metadata.bind = self.engine
+        canc.Base.metadata.bind = self.engine
         self.__db_alembic_setup()
 
 
     def __db_create(self):
         """Создает или изменяет БД в соответствии с описанной в классах структурой."""
-        anc.Base.metadata.create_all()
+        canc.Base.metadata.create_all()
 
 
     def __db_disconnect(self):
@@ -118,7 +118,7 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def __db_exists(self):
         """Проверяет наличие базы данных по пути в конфигурации."""
-        db_folder_path = Path(self.config.restore_value(cfg.DATABASE_FILE_KEY))
+        db_folder_path = Path(self.config.restore_value(ccfg.DATABASE_FILE_KEY))
         return db_folder_path.exists()
 
 
@@ -148,14 +148,14 @@ class CMainWindow(QtWidgets.QMainWindow):
         for tag in tag_name_list:
             
             # *** Получим ID тега
-            tag_id = self.session.query(tag.CTag.id).filter_by(fname=tag).first()
+            tag_id = self.session.query(ctag.CTag.id).filter_by(fname=tag).first()
             if tag_id is None:
                 
                 # *** Тега такого еще нет в базе, добавляем
-                tag_object = tag.CTag(tag)
+                tag_object = ctag.CTag(tag)
                 self.session.add(tag_object)
                 # *** И снова ищем. 
-                tag_id = self.session.query(tag.CTag.id).filter_by(fname=tag).first()
+                tag_id = self.session.query(ctag.CTag.id).filter_by(fname=tag).first()
             
             # *** Заносим ID тега в список и удаляем его из списка необработанных тегов
             tag_id_list.append(tag_id)
