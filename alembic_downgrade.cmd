@@ -1,0 +1,1 @@
+D:\home\bin\python.cmd Scripts\alembic.exe downgrade -1

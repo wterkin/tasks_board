@@ -1,47 +1,53 @@
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.ru
 """Модуль класса задач."""
-
-from sqlalchemy import Table, Column, String, Text
-
-import c_ancestor as anc
 import uuid
+from sqlalchemy import Column, ForeignKey, Integer, String
 
-class CTask(anc.CAncestor):
-    """Класс справочника событий."""
+import c_ancestor
+import c_context
+class CTask(c_ancestor.CAncestor):
+    """Класс таблицы задач."""
 
     __tablename__ = 'tbl_tasks'
-    
-    fguid = Column(String,
-                   nullable=False,
-                   unique=True)
+
+    fcontext = Column(Integer, ForeignKey(c_context.CContext.id))
     fdescription = Column(String,
                           nullable=False,
                           unique=True)
-    fnotice = Column(Text)
+    fguid = Column(String,
+                   nullable=False,
+                   unique=True)
+    # fnotice = Column(Text)
+    furgency = Column(Integer,
+                     nullable=False
+                     )
 
 
-    def __init__(self, pdescription, pnotice):
+    def __init__(self, pcontext, pdescription, purgency):
         """Конструктор"""
         super().__init__()
-        self.__GUID_generation()
+        self.guid_generation()
+        self.fcontext = pcontext
         self.fdescription = pdescription
-        self.fnotice = pnotice
-        
+        self.furgency = purgency
 
-    def __GUID_generation(self):
+
+    def __repr__(self):
+        ancestor_repr = super().__repr__()
+        return f"""{ancestor_repr},
+                   Context:{self.fcontext},
+                   Desc:{self.fdescription},
+                   GUID:{self.fguid},
+                   Notice:{self.furgency}"""
+
+
+    def get_guid(self):
+        """Возвращает сгенерированный GUID."""
+        return self.fguid
+
+
+    def guid_generation(self):
         """Генерирует GUID."""
         guid_string = str(uuid.uuid1())
         guid_list = guid_string.split("-")
         self.fguid = "".join(guid_list)
-
-    
-    def __repr__(self):
-        ancestor_repr = super().__repr__()
-        return f"""{ancestor_repr},
-                   Desc:{self.fdescription},
-                   Notice:{self.fnotice}"""
-
-
-    def get_GUID(self):
-        """Возвращает сгенерированный GUID."""
-        return fguid

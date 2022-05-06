@@ -1,12 +1,12 @@
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.ru
 """Модуль класса справочника событий."""
 
-from sqlalchemy import Table, Column, String
+from sqlalchemy import Column, String
 
-import c_ancestor as anc
+import c_ancestor
 
-class CContext(anc.CAncestor):
-    """Класс справочника событий."""
+class CContext(c_ancestor.CAncestor):
+    """Класс справочника контекстов."""
 
     __tablename__ = 'tbl_contexts'
     fname = Column(String,
@@ -14,7 +14,7 @@ class CContext(anc.CAncestor):
                     unique=True)
 
 
-    def __init__(self, pname):
+    def __init__(self, pname: str):
         """Конструктор"""
         super().__init__()
         self.fname = pname
@@ -24,5 +24,3 @@ class CContext(anc.CAncestor):
         ancestor_repr = super().__repr__()
         return f"""{ancestor_repr},
                    Name:{self.fname}"""
-
-  

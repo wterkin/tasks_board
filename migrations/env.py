@@ -5,14 +5,6 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# path.insert(0, "D:/home/projects/python/tasks_board/")
-path.insert(0, "../-tasks_board/")
-
-import c_ancestor
-import c_context
-import c_tag
-import c_tasks
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -25,9 +17,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-# target_metadata = None
-
-target_metadata = c_ancestor.meta_data
+target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

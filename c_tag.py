@@ -1,12 +1,12 @@
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.ru
 """Модуль класса справочника событий."""
 
-from sqlalchemy import Table, Column, String
+from sqlalchemy import Column, String
 
 import c_ancestor as anc
 
 class CTag(anc.CAncestor):
-    """Класс справочника событий."""
+    """Класс справочника тэгов."""
 
     __tablename__ = 'tbl_tags'
     fname = Column(String,
@@ -24,5 +24,3 @@ class CTag(anc.CAncestor):
         ancestor_repr = super().__repr__()
         return f"""{ancestor_repr},
                    Name:{self.fname}"""
-
-  
