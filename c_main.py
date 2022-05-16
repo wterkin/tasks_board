@@ -17,6 +17,7 @@ import c_context
 import c_tag
 import c_task
 import c_taglink
+import c_taskdatamodel
 
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -34,7 +35,8 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.application_folder: Path = Path.cwd()
 
         # *** Конфигурация
-        self.config: CConfiguration = c_config.CConfiguration()
+        self.config: c_config.CConfiguration = c_config.CConfiguration()
+        # self.quit()
         self.context_ids: list = []
 
         # *** Интерфейс
@@ -43,10 +45,12 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon('ui/tasks_board.ico'))
 
         # *** База данных
-        self.database: CDataBase = CDataBase(self.config)
+        self.database: c_database.CDataBase = c_database.CDataBase(self.config)
         if not self.database.exists():
 
             self.database.create()
+        self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
+        self.tableView_Main.setModel(self.task_model)
 
         # *** Обработчики
         self.toolButton_Apply.clicked.connect(self.save_task)
@@ -58,6 +62,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.fill_contexts_combo()
         # *** Показываем окно
         self.show()
+        self.update_grid()
         # self.update()
         # *** Компоненты
         # lineEdit_TagsFilter
@@ -70,6 +75,11 @@ class CMainWindow(QtWidgets.QMainWindow):
         # toolButton_TextFilter
         # toolButton_Quit
         # toolButton_Apply
+        # tableView_Main
+
+        # self.table = QtWidgets.QTableView()
+        # self.model = TableModel(data)
+        # self.table.setModel(self.model)
 
     def delete_task(self):
         """Удаляет задачу"""
@@ -94,10 +104,19 @@ class CMainWindow(QtWidgets.QMainWindow):
         #print(f"*** Mn:fcc:contname {context_names}")
         #self.comboBox_Contexts.addItems(context_names)
 
+    def get_tag_id(self):
+        """Возвращает ID первого введенного тега."""
+        tag = self.lineEdit_Tags.text().split()[0]
+        tag_id = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
+        if tag_id is None:
+            return tag_id
+        return None
+
     def parse_entered_tags(self, ptag_name_list: list)-> list:
         """Парсит список введенных тегов, возвращает список ID тэгов в базе."""
 
         tag_id_list: list = []
+        tag_object: c_tag.CTag
         for tag in ptag_name_list:
 
             # *** Получим ID тега
@@ -149,6 +168,21 @@ class CMainWindow(QtWidgets.QMainWindow):
     def set_text_filter(self):
         """Включает или выключает фильтрацию по тексту задачи."""
         pass
+
+    def update_grid(self):
+        """Обновляет содержимое грида."""
+        tag_id = -1
+        if self.lineEdit_Tags.text():
+
+            tag_id = self.get_tag_id()
+
+        self.task_model.select_data(self.comboBox_Contexts.currentData(), tag_id)
+        # tableView_Main
+        # query = self.database.get_session().query(c_task.CTask).filter_by(fcontext=self.comboBox_Contexts.currentData())
+        # if self.lineEdit_Tags.text():
+        #
+        #     query = query.filter_by(ftag=self.get_tag_id())
+
 
     def keyPressEvent(self, event):  # pylint: disable-msg=C0103
         """Отлавливает нажатие Ctrl-Q."""

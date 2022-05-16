@@ -17,7 +17,7 @@ class CInformation(anc.CAncestor):
     def __init__(self, pversion: int):
         """Конструктор"""
         super().__init__()
-        self.fversion: int = pversion
+        self.fversion = pversion
 
 
     def __repr__(self):

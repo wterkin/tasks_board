@@ -62,7 +62,6 @@ class CDataBase():
         self.session.commit()
 
 
-
     def disconnect(self):
         """Разрывает соединение с БД."""
         self.session.close()
@@ -75,7 +74,7 @@ class CDataBase():
         return db_folder_path.exists()
 
 
-    def get_session(self)-> object:
+    def get_session(self):
         """Возвращает экземпляр session."""
         return self.session
 

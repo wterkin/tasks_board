@@ -5,12 +5,19 @@
 # py lint: disable=C0301
 
 """Модуль конфигурации."""
+from sys import platform
 from pathlib import Path
 import json
 
 APP_NAME: str = "tasks_board"
-ALL_CONFIGS_FOLDER: str = ".config/"
-CONFIG_FOLDER: str = f"{ALL_CONFIGS_FOLDER}/{APP_NAME}/"
+HOME_PREFIX: str = ""
+
+# if platform == "linux" or platform == "linux2":
+if platform in ("linux", "linux2"):
+
+    HOME_PREFIX = ".config"
+
+APP_FOLDER: str = f"{HOME_PREFIX}/.{APP_NAME}"
 CONFIG_FILE_NAME: str = f"{APP_NAME}.json"
 DATABASE_FILE_NAME: str = f"{APP_NAME}.db"
 DATABASE_FILE_KEY: str = "database_file_name"
@@ -22,33 +29,25 @@ class CConfiguration():
     def __init__(self):
         """Конструктор."""
 
-        all_configs_folder_path: object = Path(Path.home() / ALL_CONFIGS_FOLDER)
-        if not all_configs_folder_path.exists():
+        # *** Соберём путь к домашнему каталогу программы и создадим каталог, если его нет.
+        self.home_folder_path: object = Path(Path.home() / APP_FOLDER)
+        if not self.home_folder_path.exists():
 
-            all_configs_folder_path.mkdir()
-
-        config_folder_path: object = Path(Path.home() / CONFIG_FOLDER)
-        if not config_folder_path.exists():
-
-            config_folder_path.mkdir()
-        config_file: object = config_folder_path / CONFIG_FILE_NAME
+            self.home_folder_path.mkdir()
+        # *** Конфиг будет лежать в домашнем каталоге. Создадим его, если его нет.
+        config_file: object = self.home_folder_path / CONFIG_FILE_NAME
         if config_file.exists():
 
             self.read_config()
         else:
 
             self.config: dict = {}
-
+        # *** Если в конфиге не прописана БД, пропишем её.
         if DATABASE_FILE_KEY not in self.config:
 
             self.store_value(DATABASE_FILE_KEY,
-                             str(Path.home() / CONFIG_FOLDER / DATABASE_FILE_NAME))
+                             str(self.home_folder_path / DATABASE_FILE_NAME))
             self.write_config()
-        # if not MAX_BACKUP_FILES_KEY in self.config:
-
-            # self.store_value(MAX_BACKUP_FILES_KEY, 5)
-            # self.write_config()
-
 
     def store_value(self, pkey: str, pvalue: str) -> bool:
         """Сохраняет заданное значение по заданному ключу в словарь конфигурации."""
@@ -73,7 +72,7 @@ class CConfiguration():
     def write_config(self):
         """Сохраняет словарь конфигурации в файл в формате json."""
         # config_file = open(Path.home() / CONFIG_FOLDER / CONFIG_FILE_NAME, "w", encoding="utf-8")
-        with open(Path.home() / CONFIG_FOLDER / CONFIG_FILE_NAME, "w", encoding="utf-8") as config_file:
+        with open(self.home_folder_path / CONFIG_FILE_NAME, "w", encoding="utf-8") as config_file:
 
             config_file.write(json.dumps(self.config, sort_keys=True, indent=4))
         # config_file.close()
@@ -82,7 +81,7 @@ class CConfiguration():
     def read_config(self):
         """Считывает сохраненную конфигурацию из json файла в словарь."""
         # config_file = open(Path.home() / CONFIG_FOLDER / CONFIG_FILE_NAME, "r", encoding="utf-8")
-        with open(Path.home() / CONFIG_FOLDER / CONFIG_FILE_NAME, "r", encoding="utf-8") as config_file:
+        with open(Path.home() / APP_FOLDER / CONFIG_FILE_NAME, "r", encoding="utf-8") as config_file:
 
             self.config = json.load(config_file)
         # config_file.close()

@@ -8,6 +8,7 @@ call D:\home\bin\pylint.cmd c_taglink.py
 call D:\home\bin\pylint.cmd c_task.py
 call D:\home\bin\pylint.cmd c_context.py
 call D:\home\bin\pylint.cmd c_database.py
+call D:\home\bin\pylint.cmd c_tablemodel.py
 call D:\home\bin\pylint.cmd c_main.py
 echo Done.
 D:\home\bin\PortableApps\PortableApps\AkelPadPortable\AkelPadPortable.exe  lint.log

@@ -6,8 +6,8 @@
 from sqlalchemy import Column, Integer, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
-STATUS_INACTIVE: int = 0
 STATUS_ACTIVE: int = 1
+STATUS_INACTIVE: int = 0
 
 convention = {
               "all_column_names": lambda constraint,
@@ -23,7 +23,7 @@ convention = {
 }
 
 meta_data: object = MetaData(naming_convention = convention)
-Base: object = declarative_base(metadata=meta_data)
+Base = declarative_base(metadata=meta_data)
 
 class CAncestor(Base):
     """Класс-предок всех классов-таблиц Alchemy."""
