@@ -3,14 +3,11 @@
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.rufrom PyQt5 import QtCore, QtGui, QtWidgets
 """Модель для таблицы задач."""
 from PyQt5 import QtGui, QtCore
-# from PyQt5.QtCore import Qt
 
 import c_task
-# import c_tag
-# import c_context
 
-ROWS_IN_PAGE = 5 #  25
-FIRST_PAGE = 0
+ROWS_IN_PAGE = 10 #  25
+HORIZONTAL_HEADERS = ("Задачи","")
 
 class CTaskDataModel(QtGui.QStandardItemModel):
     """Класс модели таблицы задач."""
@@ -18,16 +15,14 @@ class CTaskDataModel(QtGui.QStandardItemModel):
     def __init__(self, pdatabase): #  parent,
         """Конструктор."""
         QtGui.QStandardItemModel.__init__(self)
-        # self.gui = parent
         self.database = pdatabase
         self.page: int = 0
         self.row_count: int = ROWS_IN_PAGE
         self.col_count: int = 1
         self.context_id: int = 0
         self.tag_id: int = 0
-        # self.data_pool: list = []  # $$$ Временный источник данных
         self.update_model()
-        self.setHorizontalHeaderLabels(["Задачи",""])
+        self.setHorizontalHeaderLabels(HORIZONTAL_HEADERS)
         self.setHeaderData(0, QtCore.Qt.Horizontal, QtCore.Qt.AlignJustify, QtCore.Qt.TextAlignmentRole)
 
     def columnCount(self, index): #  pylint: disable=invalid-name, unused-argument,
@@ -37,7 +32,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
     def first_page(self):
         """Переключаемся на первую страницу данных."""
         self.page = 0
-        self.update_table()
+        self.update()
         return self.page
 
     def get_page(self):
@@ -60,7 +55,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
     def last_page(self):
         """Переключаемся на последнюю страницу данных."""
         self.page = self.page_count - 1
-        self.update_table()
+        self.update()
         return self.page
 
     def next_page(self):
@@ -68,7 +63,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         if self.page < (self.page_count - 1):
 
             self.page += 1
-        self.update_table()
+        self.update()
         return self.page
 
     def page_number(self):
@@ -80,7 +75,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         if self.page > 0:
 
             self.page -=1
-        self.update_table()
+        self.update()
         return self.page
 
     def get_query(self):

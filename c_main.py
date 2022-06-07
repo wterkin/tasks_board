@@ -65,7 +65,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.toolButton_ViewDeleted.clicked.connect(self.view_deleted)
         self.fill_contexts_combo()
         # *** Показываем окно
-        self.task_model = c_taskdatamodel.CTaskDataModel(self.tableView_Main, self.database)
+        self.task_model = c_taskdatamodel.CTaskDataModel(self.database) #  self.tableView_Main, 
         self.tableView_Main.setModel(self.task_model)
         # self.tableViewq_Main.verticalHeader().hide()
         header = self.tableView_Main.horizontalHeader()
