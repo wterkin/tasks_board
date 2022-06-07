@@ -100,20 +100,17 @@ class CMainWindow(QtWidgets.QMainWindow):
                                                                  c_context.CContext.fname)
         queried_data = queried_data.filter(c_context.CContext.fstatus > 0)
         context_list: list = queried_data.all()
-        #context_names:list = []
         self.comboBox_Contexts.clear()
         for context in context_list:
 
             self.comboBox_Contexts.addItem(context[1], context[0])
-        #print(f"*** Mn:fcc:contid {self.context_ids}")
-        #print(f"*** Mn:fcc:contname {context_names}")
-        #self.comboBox_Contexts.addItems(context_names)
 
     def get_tag_id(self):
         """Возвращает ID первого введенного тега."""
         tag = self.lineEdit_Tags.text().split()[0]
         tag_id = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
         if tag_id is None:
+
             return tag_id
         return None
 
@@ -141,28 +138,24 @@ class CMainWindow(QtWidgets.QMainWindow):
     def nav_top(self):
         """Вывести в грид первую страницу данных."""
         page: int = self.task_model.first_page()
-        print(f"M:NT {page}")
-        self.nav_state(0)
+        self.nav_state(page)
         self.update_grid()
 
     def nav_up(self):
         """Вывести в грид предыдущую страницу данных."""
         page: int = self.task_model.prev_page()
-        print(f"M:NU {page}")
         self.nav_state(page)
         self.update_grid()
 
     def nav_down(self):
         """Вывести в грид следующую страницу данных."""
         page: int = self.task_model.next_page()
-        # print(f"M:ND {page}")
         self.nav_state(page)
         self.update_grid()
 
     def nav_bottom(self):
         """Вывести в грид последнюю страницу данных."""
         page: int = self.task_model.last_page()
-        print(f"M:NB {page}")
         self.nav_state(page)
         self.update_grid()
 
@@ -216,8 +209,6 @@ class CMainWindow(QtWidgets.QMainWindow):
             # *** Поищем введенные теги в базе
             tag_id_list: list = self.parse_entered_tags(tag_name_list)
             # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
-            # print(tag_id_list)
-            # print(description)
             for tag_id in tag_id_list:
 
                 taglink_object = c_taglink.CTagLink(tag_id, task_guid)
@@ -240,15 +231,8 @@ class CMainWindow(QtWidgets.QMainWindow):
             tag_id = self.get_tag_id()
         self.task_model.set_context(self.comboBox_Contexts.currentData())
         self.task_model.set_tag(tag_id)
-        self.task_model.update_table()
-        print("!!! ", self.task_model.rowCount())
-
-        # self.task_model.query_current_page(self.comboBox_Contexts.currentData(), tag_id)
-        # tableView_Main
-        # query = self.database.get_session().query(c_task.CTask).filter_by(fcontext=self.comboBox_Contexts.currentData())
-        # if self.lineEdit_Tags.text():
-        #
-        #     query = query.filter_by(ftag=self.get_tag_id())
+        self.task_model.update()
+        self.task_model.update_model()
 
     def update_button_state(self):
         """Управляет состояниями кнопок интерфейса."""

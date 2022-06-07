@@ -6,8 +6,8 @@ from PyQt5 import QtGui, QtCore
 # from PyQt5.QtCore import Qt
 
 import c_task
-import c_tag
-import c_context
+# import c_tag
+# import c_context
 
 ROWS_IN_PAGE = 5 #  25
 FIRST_PAGE = 0
@@ -15,22 +15,22 @@ FIRST_PAGE = 0
 class CTaskDataModel(QtGui.QStandardItemModel):
     """Класс модели таблицы задач."""
 
-    def __init__(self, parent, pdatabase):
+    def __init__(self, pdatabase): #  parent,
         """Конструктор."""
         QtGui.QStandardItemModel.__init__(self)
-        self.gui = parent
+        # self.gui = parent
         self.database = pdatabase
         self.page: int = 0
         self.row_count: int = ROWS_IN_PAGE
         self.col_count: int = 1
         self.context_id: int = 0
         self.tag_id: int = 0
-        self.data_pool: list = []  # $$$ Временный источник данных
+        # self.data_pool: list = []  # $$$ Временный источник данных
         self.update_model()
         self.setHorizontalHeaderLabels(["Задачи",""])
         self.setHeaderData(0, QtCore.Qt.Horizontal, QtCore.Qt.AlignJustify, QtCore.Qt.TextAlignmentRole)
 
-    def columnCount(self, index):
+    def columnCount(self, index): #  pylint: disable=invalid-name, unused-argument,
         """Возвращает количество столбцов в наборе данных."""
         return self.col_count
 
@@ -48,7 +48,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         """Возвращает количество страниц в наборе данных."""
         return self.page_count
 
-    def headerData(self, section, orientation, role):
+    def headerData(self, section, orientation, role): #  pylint: disable=invalid-name, no-self-use
         """Возвращает заголовок таблицы."""
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
@@ -114,7 +114,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
 
             self.page_count += 1
 
-    def update_table(self):
+    def update(self):
         """Обновляет данные в таблице"""
         query = self.get_query().offset(self.page * ROWS_IN_PAGE)
         query = query.limit(ROWS_IN_PAGE)

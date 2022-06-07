@@ -130,6 +130,21 @@
         # self.page_count = task_count // ROWS_IN_PAGE
         # if task_count % ROWS_IN_PAGE > 0:
         # 
+
+        print("!!! ", self.task_model.rowCount())
+
+        # self.task_model.query_current_page(self.comboBox_Contexts.currentData(), tag_id)
+        # tableView_Main
+        # query = self.database.get_session().query(c_task.CTask).filter_by(fcontext=self.comboBox_Contexts.currentData())
+        # if self.lineEdit_Tags.text():
+        #
+        #     query = query.filter_by(ftag=self.get_tag_id())
         #     self.page_count += 1
 
 
+            # print(tag_id_list)
+            # print(description)
+        #context_names:list = []
+        #print(f"*** Mn:fcc:contid {self.context_ids}")
+        #print(f"*** Mn:fcc:contname {context_names}")
+        #self.comboBox_Contexts.addItems(context_names)
