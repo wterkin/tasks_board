@@ -10,9 +10,7 @@ import c_tag
 import c_context
 
 ROWS_IN_PAGE = 5 #  25
-# TOTAL_TASK_COUNT = 250  # $$$$
 FIRST_PAGE = 0
-# LAST_PAGE = -2
 
 class CTaskDataModel(QtGui.QStandardItemModel):
     """Класс модели таблицы задач."""
@@ -27,34 +25,14 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         self.col_count: int = 1
         self.context_id: int = 0
         self.tag_id: int = 0
-        self.task_count: int = self.query_task_count()
-        self.page_count = self.task_count // self.row_count
-        if self.task_count % self.row_count > 0:
-
-            self.page_count += 1
-
         self.data_pool: list = []  # $$$ Временный источник данных
-
-        # вот это придётся делать при каждом обновлении набора данных
-        self.page_count = (self.task_count // ROWS_IN_PAGE)
-        if self.task_count % ROWS_IN_PAGE > 0:
-
-            self.page_count += 1
+        self.update_model()
         self.setHorizontalHeaderLabels(["Задачи",""])
         self.setHeaderData(0, QtCore.Qt.Horizontal, QtCore.Qt.AlignJustify, QtCore.Qt.TextAlignmentRole)
 
-    def headerData(self, section, orientation, role):
-        """Возвращает заголовок таблицы."""
-        if role == QtCore.Qt.DisplayRole:
-            if orientation == QtCore.Qt.Horizontal:
-                return ["Задачи", ] #  [section]
-            if orientation == QtCore.Qt.Vertical:
-                return f"{section}"
-        return ""
-
     def columnCount(self, index):
         """Возвращает количество столбцов в наборе данных."""
-        return self.col_count  # len(self._data[0])
+        return self.col_count
 
     def first_page(self):
         """Переключаемся на первую страницу данных."""
@@ -69,6 +47,15 @@ class CTaskDataModel(QtGui.QStandardItemModel):
     def get_page_count(self):
         """Возвращает количество страниц в наборе данных."""
         return self.page_count
+
+    def headerData(self, section, orientation, role):
+        """Возвращает заголовок таблицы."""
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal:
+                return ["Задачи", ] #  [section]
+            if orientation == QtCore.Qt.Vertical:
+                return f"{section}"
+        return ""
 
     def last_page(self):
         """Переключаемся на последнюю страницу данных."""
@@ -119,21 +106,20 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         """Устанавливает идентификатор тэга."""
         self.tag_id = ptag_id
 
+    def update_model(self):
+        """Обновляет настройки модели в соотвествии с состоянием базы."""
+        task_count = self.query_task_count()
+        self.page_count = task_count // ROWS_IN_PAGE
+        if task_count % ROWS_IN_PAGE > 0:
+
+            self.page_count += 1
+
     def update_table(self):
         """Обновляет данные в таблице"""
-        # offset() limit()
-        # self.task_model.query_current_page(self.comboBox_Contexts.currentData(), tag_id)
-        # tableView_Main
-        # query = self.database.get_session().query(c_task.CTask).filter_by(fcontext=self.comboBox_Contexts.currentData())
         query = self.get_query().offset(self.page * ROWS_IN_PAGE)
         query = query.limit(ROWS_IN_PAGE)
         data = query.all()
         self.clear()
         for item in data:
+
             self.appendRow(QtGui.QStandardItem(item.fdescription))
-        # low_bound: int = self.page * ROWS_IN_PAGE
-        # high_bound: int = (self.page + 1) *ROWS_IN_PAGE
-        # for number in range(low_bound, high_bound):
-        #
-        #     item_str = f"Чепуха всяческая N {number}"
-        #     self.appendRow(QtGui.QStandardItem(item_str))

@@ -106,3 +106,30 @@
             # self.appendRow(QtGui.QStandardItem("Чепуха всяческая N {number}"))
 
         # return self.data_pool
+
+        # low_bound: int = self.page * ROWS_IN_PAGE
+        # high_bound: int = (self.page + 1) *ROWS_IN_PAGE
+        # for number in range(low_bound, high_bound):
+        #
+        #     item_str = f"Чепуха всяческая N {number}"
+        #     self.appendRow(QtGui.QStandardItem(item_str))
+
+        # offset() limit()
+        # self.task_model.query_current_page(self.comboBox_Contexts.currentData(), tag_id)
+        # tableView_Main
+        # query = self.database.get_session().query(c_task.CTask).filter_by(fcontext=self.comboBox_Contexts.currentData())
+        # self.task_count: int = self.query_task_count()
+
+        # self.page_count = self.task_count // self.row_count
+        # if self.query_task_count() % self.row_count > 0:
+
+            # self.page_count += 1
+
+        # вот это придётся делать при каждом обновлении набора данных
+        # task_count = self.query_task_count()
+        # self.page_count = task_count // ROWS_IN_PAGE
+        # if task_count % ROWS_IN_PAGE > 0:
+        # 
+        #     self.page_count += 1
+
+
