@@ -197,32 +197,34 @@ class CMainWindow(QtWidgets.QMainWindow):
     def save_task(self):
         """Сохраняет введённую задачу."""
 
-        context_id: int = self.comboBox_Contexts.currentData()
-        urgency: int = self.comboBox_Urgency.currentIndex()
         description: str = self.lineEdit_Task.text()
-        task_object: object = c_task.CTask(context_id, description, urgency)
-        task_guid: str = task_object.get_guid()
-        self.database.get_session().add(task_object)
-        self.database.get_session().commit()
-        # *** Соберём введенные теги
-        entered_tags: str = self.lineEdit_Tags.text()
-        if not entered_tags:
+        if description:
 
-            entered_tags = c_database.EMPTY_TAG
+            context_id: int = self.comboBox_Contexts.currentData()
+            urgency: int = self.comboBox_Urgency.currentIndex()
+            task_object: object = c_task.CTask(context_id, description, urgency)
+            task_guid: str = task_object.get_guid()
+            self.database.get_session().add(task_object)
+            self.database.get_session().commit()
+            # *** Соберём введенные теги
+            entered_tags: str = self.lineEdit_Tags.text()
+            if not entered_tags:
 
-        tag_name_list: list = entered_tags.split()
-        # *** Поищем введенные теги в базе
-        tag_id_list: list = self.parse_entered_tags(tag_name_list)
-        # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
-        # print(tag_id_list)
-        # print(description)
-        for tag_id in tag_id_list:
+                entered_tags = c_database.EMPTY_TAG
 
-            taglink_object = c_taglink.CTagLink(tag_id, task_guid)
-            self.database.get_session().add(taglink_object)
-        self.database.get_session().commit()
-        self.lineEdit_Task.clear()
-        self.lineEdit_Tags.clear()
+            tag_name_list: list = entered_tags.split()
+            # *** Поищем введенные теги в базе
+            tag_id_list: list = self.parse_entered_tags(tag_name_list)
+            # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
+            # print(tag_id_list)
+            # print(description)
+            for tag_id in tag_id_list:
+
+                taglink_object = c_taglink.CTagLink(tag_id, task_guid)
+                self.database.get_session().add(taglink_object)
+            self.database.get_session().commit()
+            self.lineEdit_Task.clear()
+            self.lineEdit_Tags.clear()
 
     def set_tags_filter(self):
         """Включает или выключает фильтрацию по тегам."""
