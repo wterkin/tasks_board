@@ -8,14 +8,13 @@
 from sys import platform
 from pathlib import Path
 import json
-
+from os.path import expanduser
 APP_NAME: str = "tasks_board"
-HOME_PREFIX: str = ""
-
+HOME_PREFIX: str = expanduser("~")
 # if platform == "linux" or platform == "linux2":
 if platform in ("linux", "linux2"):
 
-    HOME_PREFIX = ".config"
+    HOME_PREFIX += ".config"
 
 APP_FOLDER: str = f"{HOME_PREFIX}/.{APP_NAME}"
 CONFIG_FILE_NAME: str = f"{APP_NAME}.json"
@@ -31,11 +30,13 @@ class CConfiguration():
 
         # *** Соберём путь к домашнему каталогу программы и создадим каталог, если его нет.
         self.home_folder_path: object = Path(Path.home() / APP_FOLDER)
+        print("CFG:INIT:HFP ", self.home_folder_path)
         if not self.home_folder_path.exists():
 
             self.home_folder_path.mkdir()
         # *** Конфиг будет лежать в домашнем каталоге. Создадим его, если его нет.
         config_file: object = self.home_folder_path / CONFIG_FILE_NAME
+        print("CFG:INIT:CFL ", config_file)
         if config_file.exists():
 
             self.read_config()
@@ -84,4 +85,4 @@ class CConfiguration():
         with open(Path.home() / APP_FOLDER / CONFIG_FILE_NAME, "r", encoding="utf-8") as config_file:
 
             self.config = json.load(config_file)
-        # config_file.close()
+        print("CFG:RCFG:CFG ", self.config)

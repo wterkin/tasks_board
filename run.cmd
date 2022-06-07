@@ -1,3 +1,3 @@
 @echo off
-D:\home\bin\python.cmd python.exe c_main.py
+D:\home\bin\python.cmd c_main.py
 pause

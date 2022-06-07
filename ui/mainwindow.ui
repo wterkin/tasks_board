@@ -26,7 +26,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="QFrame" name="frame">
       <property name="minimumSize">
@@ -163,6 +163,9 @@
            <height>22</height>
           </size>
          </property>
+         <property name="shortcut">
+          <string>Ctrl+Q</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -176,7 +179,7 @@
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QFrame" name="frame_5">
          <property name="frameShape">
@@ -197,6 +200,16 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>accessories-text-editor.png</normaloff>accessories-text-editor.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
@@ -209,6 +222,16 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>edit-delete.png</normaloff>edit-delete.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -223,13 +246,134 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>gtk_apply.png</normaloff>gtk_apply.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidget_Tasks"/>
+        <widget class="QTableView" name="tableView_Main">
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_3">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QToolButton" name="toolButton_NavTop">
+            <property name="minimumSize">
+             <size>
+              <width>29</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>go-top.png</normaloff>go-top.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NavUp">
+            <property name="minimumSize">
+             <size>
+              <width>29</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>go-up.png</normaloff>go-up.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NavDown">
+            <property name="minimumSize">
+             <size>
+              <width>29</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>go-down.png</normaloff>go-down.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NavBottom">
+            <property name="minimumSize">
+             <size>
+              <width>29</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>go-bottom.png</normaloff>go-bottom.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -337,7 +481,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton_Apply">
+        <widget class="QToolButton" name="toolButton_SaveTask">
          <property name="toolTip">
           <string>Сохранить задачу</string>
          </property>
@@ -346,13 +490,16 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>gtk_apply.png</normaloff>gtk_apply.png</iconset>
+           <normaloff>media-floppy.png</normaloff>media-floppy.png</iconset>
          </property>
          <property name="iconSize">
           <size>
            <width>22</width>
            <height>22</height>
           </size>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+Return</string>
          </property>
         </widget>
        </item>

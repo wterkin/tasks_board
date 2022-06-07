@@ -36,7 +36,7 @@ class CMainWindow(QtWidgets.QMainWindow):
 
         # *** Конфигурация
         self.config: c_config.CConfiguration = c_config.CConfiguration()
-        # self.quit()
+        # exit()        # self.quit()
         self.context_ids: list = []
 
         # *** Интерфейс
@@ -49,45 +49,50 @@ class CMainWindow(QtWidgets.QMainWindow):
         if not self.database.exists():
 
             self.database.create()
-        self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
-        self.tableView_Main.setModel(self.task_model)
-
-        # *** Обработчики
-        self.toolButton_Apply.clicked.connect(self.save_task)
+        # *** Обработчики кнопок
+        self.toolButton_CompleteTask.clicked.connect(self.complete_task)
+        self.toolButton_DeleteTask.clicked.connect(self.delete_task)
+        self.toolButton_EditTask.clicked.connect(self.edit_task)
+        self.toolButton_NavBottom.clicked.connect(self.nav_bottom)
+        self.toolButton_NavDown.clicked.connect(self.nav_down)
+        self.toolButton_NavTop.clicked.connect(self.nav_top)
+        self.toolButton_NavUp.clicked.connect(self.nav_up)
+        self.toolButton_Quit.clicked.connect(self.quit)
+        self.toolButton_SaveTask.clicked.connect(self.save_task)
         self.toolButton_TagsFilter.clicked.connect(self.set_tags_filter)
         self.toolButton_TextFilter.clicked.connect(self.set_text_filter)
-        self.pushButton_EditTask.clicked.connect(self.edit_task)
-        self.pushButton_DeleteTask.clicked.connect(self.delete_task)
-
+        self.toolButton_ViewCompleted.clicked.connect(self.view_completed)
+        self.toolButton_ViewDeleted.clicked.connect(self.view_deleted)
         self.fill_contexts_combo()
         # *** Показываем окно
+        self.task_model = c_taskdatamodel.CTaskDataModel(self.tableView_Main, self.database)
+        self.tableView_Main.setModel(self.task_model)
+        # self.tableViewq_Main.verticalHeader().hide()
+        header = self.tableView_Main.horizontalHeader()
+        header.setSectionResizeMode(header.Stretch)
+        # header.setStyleSheet("background-color:lightgrey;");
+        header.setStyleSheet('''
+            ::section {
+            background-color: lightgray;
+            border-style: flat;
+            padding: 0px 5px;
+            }''')
         self.show()
+        self.nav_state(0)
         self.update_grid()
-        # self.update()
         # *** Компоненты
         # lineEdit_TagsFilter
         # lineEdit_TextFilter
-        # checkBox_ShowCompleted
-        # checkBox_ShowDeleted
-        # tableWidget_Tasks
         # statusBar
-        # toolButton_TagsFilter
-        # toolButton_TextFilter
-        # toolButton_Quit
-        # toolButton_Apply
-        # tableView_Main
 
-        # self.table = QtWidgets.QTableView()
-        # self.model = TableModel(data)
-        # self.table.setModel(self.model)
+    def complete_task(self):
+        """Завершает задачу"""
 
     def delete_task(self):
         """Удаляет задачу"""
-        pass
 
     def edit_task(self):
         """Добавляет новую задачу"""
-        pass
 
     def fill_contexts_combo(self):
         """Заполняет выпадающий список контекстов."""
@@ -111,6 +116,55 @@ class CMainWindow(QtWidgets.QMainWindow):
         if tag_id is None:
             return tag_id
         return None
+
+    def nav_state(self, page):
+        """Разрешает и запрещает кнопки навигации."""
+        if page == 0:
+
+            self.toolButton_NavTop.setEnabled(False)
+            self.toolButton_NavUp.setEnabled(False)
+            self.toolButton_NavDown.setEnabled(True)
+            self.toolButton_NavBottom.setEnabled(True)
+        elif page < self.task_model.get_page_count()-1:
+
+            self.toolButton_NavTop.setEnabled(True)
+            self.toolButton_NavUp.setEnabled(True)
+            self.toolButton_NavDown.setEnabled(True)
+            self.toolButton_NavBottom.setEnabled(True)
+        else:
+
+            self.toolButton_NavTop.setEnabled(True)
+            self.toolButton_NavUp.setEnabled(True)
+            self.toolButton_NavDown.setEnabled(False)
+            self.toolButton_NavBottom.setEnabled(False)
+
+    def nav_top(self):
+        """Вывести в грид первую страницу данных."""
+        page: int = self.task_model.first_page()
+        print(f"M:NT {page}")
+        self.nav_state(0)
+        self.update_grid()
+
+    def nav_up(self):
+        """Вывести в грид предыдущую страницу данных."""
+        page: int = self.task_model.prev_page()
+        print(f"M:NU {page}")
+        self.nav_state(page)
+        self.update_grid()
+
+    def nav_down(self):
+        """Вывести в грид следующую страницу данных."""
+        page: int = self.task_model.next_page()
+        # print(f"M:ND {page}")
+        self.nav_state(page)
+        self.update_grid()
+
+    def nav_bottom(self):
+        """Вывести в грид последнюю страницу данных."""
+        page: int = self.task_model.last_page()
+        print(f"M:NB {page}")
+        self.nav_state(page)
+        self.update_grid()
 
     def parse_entered_tags(self, ptag_name_list: list)-> list:
         """Парсит список введенных тегов, возвращает список ID тэгов в базе."""
@@ -136,6 +190,10 @@ class CMainWindow(QtWidgets.QMainWindow):
             del ptag_name_list[tag_index]
         return tag_id_list
 
+    def quit(self):
+        """Завершает работу программы."""
+        self.close()
+
     def save_task(self):
         """Сохраняет введённую задачу."""
 
@@ -148,11 +206,16 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.database.get_session().commit()
         # *** Соберём введенные теги
         entered_tags: str = self.lineEdit_Tags.text()
+        if not entered_tags:
+
+            entered_tags = c_database.EMPTY_TAG
+
         tag_name_list: list = entered_tags.split()
         # *** Поищем введенные теги в базе
         tag_id_list: list = self.parse_entered_tags(tag_name_list)
         # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
         # print(tag_id_list)
+        # print(description)
         for tag_id in tag_id_list:
 
             taglink_object = c_taglink.CTagLink(tag_id, task_guid)
@@ -163,11 +226,9 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def set_tags_filter(self):
         """Включает или выключает фильтрацию по тегам."""
-        pass
 
     def set_text_filter(self):
         """Включает или выключает фильтрацию по тексту задачи."""
-        pass
 
     def update_grid(self):
         """Обновляет содержимое грида."""
@@ -175,14 +236,26 @@ class CMainWindow(QtWidgets.QMainWindow):
         if self.lineEdit_Tags.text():
 
             tag_id = self.get_tag_id()
+        self.task_model.set_context(self.comboBox_Contexts.currentData())
+        self.task_model.set_tag(tag_id)
+        self.task_model.update_table()
+        print("!!! ", self.task_model.rowCount())
 
-        self.task_model.select_data(self.comboBox_Contexts.currentData(), tag_id)
+        # self.task_model.query_current_page(self.comboBox_Contexts.currentData(), tag_id)
         # tableView_Main
         # query = self.database.get_session().query(c_task.CTask).filter_by(fcontext=self.comboBox_Contexts.currentData())
         # if self.lineEdit_Tags.text():
         #
         #     query = query.filter_by(ftag=self.get_tag_id())
 
+    def update_button_state(self):
+        """Управляет состояниями кнопок интерфейса."""
+
+    def view_completed(self):
+        """Показывает/скрывает завершенные задачи."""
+
+    def view_deleted(self):
+        """Показывает/скрывает удалённые задачи."""
 
     def keyPressEvent(self, event):  # pylint: disable-msg=C0103
         """Отлавливает нажатие Ctrl-Q."""

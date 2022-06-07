@@ -15,7 +15,7 @@ import c_config
 import c_inform
 import c_ancestor
 import c_context
-# import c_tag as ctag
+import c_tag
 # import c_task as ctsk
 
 # py lint: disable=C0301
@@ -24,7 +24,7 @@ import c_context
 DATABASE_VERSION = 1
 
 STANDARD_CONTEXTS = ("Дом", "DIY", "Работа")
-
+EMPTY_TAG = "<Пусто>"
 class CDataBase():
     """Класс."""
     def __init__(self, p_config):
@@ -42,7 +42,9 @@ class CDataBase():
 
     def connect(self):
         """Устанавливает соединение с БД."""
-        self.engine = create_engine('sqlite:///'+self.config.restore_value(c_config.DATABASE_FILE_KEY), echo=True)
+        database_path: str = self.config.restore_value(c_config.DATABASE_FILE_KEY)
+        print("CDB:CNN:DBP ", database_path)
+        self.engine = create_engine('sqlite:///'+database_path, echo=True)
         session = sessionmaker()
         session.configure(bind=self.engine)
         self.session = session()
@@ -59,6 +61,9 @@ class CDataBase():
 
             context_object = c_context.CContext(context)
             self.session.add(context_object)
+        tag_object = c_tag.CTag(EMPTY_TAG)
+        print("DB:CR:tag ", tag_object)
+        self.session.add(tag_object)
         self.session.commit()
 
 
