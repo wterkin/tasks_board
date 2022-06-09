@@ -64,8 +64,10 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.toolButton_ViewCompleted.clicked.connect(self.view_completed)
         self.toolButton_ViewDeleted.clicked.connect(self.view_deleted)
         self.fill_contexts_combo()
+        self.comboBox_Contexts.currentIndexChanged.connect(self.on_combobox_contexts_changed)
+
         # *** Показываем окно
-        self.task_model = c_taskdatamodel.CTaskDataModel(self.database) #  self.tableView_Main, 
+        self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
         self.tableView_Main.setModel(self.task_model)
         # self.tableViewq_Main.verticalHeader().hide()
         header = self.tableView_Main.horizontalHeader()
@@ -108,11 +110,11 @@ class CMainWindow(QtWidgets.QMainWindow):
     def get_tag_id(self):
         """Возвращает ID первого введенного тега."""
         tag = self.lineEdit_Tags.text().split()[0]
-        tag_id = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
-        if tag_id is None:
-
-            return tag_id
-        return None
+        # tag_id = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
+        return self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
+        # if tag_id is nNone:
+        # return tag_id
+        # return None
 
     def nav_state(self, page):
         """Разрешает и запрещает кнопки навигации."""
@@ -159,7 +161,13 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.nav_state(page)
         self.update_grid()
 
-    def parse_entered_tags(self, ptag_name_list: list)-> list:
+    def on_combobox_contexts_changed(self, value):
+        """Обработчик события от комбобокса контекстов."""
+        self.update_grid()
+        # print("combobox changed", value)
+        # do your code
+
+    def parse_entered_tags(self, ptag_name_list: list) -> list:
         """Парсит список введенных тегов, возвращает список ID тэгов в базе."""
 
         tag_id_list: list = []
