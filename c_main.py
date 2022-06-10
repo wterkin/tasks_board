@@ -65,11 +65,10 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.toolButton_ViewDeleted.clicked.connect(self.view_deleted)
         self.fill_contexts_combo()
         self.comboBox_Contexts.currentIndexChanged.connect(self.on_combobox_contexts_changed)
-
         # *** Показываем окно
         self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
         self.tableView_Main.setModel(self.task_model)
-        # self.tableViewq_Main.verticalHeader().hide()
+        # self.tableView_Main.verticalHeader().hide()
         header = self.tableView_Main.horizontalHeader()
         header.setSectionResizeMode(header.Stretch)
         # header.setStyleSheet("background-color:lightgrey;");
@@ -82,6 +81,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.show()
         self.nav_state(0)
         self.update_grid()
+        self.comboBox_Contexts.setCurrentIndex(self.config.restore_value(c_config.CONTEXT_COMBO_KEY))
         # *** Компоненты
         # lineEdit_TagsFilter
         # lineEdit_TextFilter
@@ -164,6 +164,7 @@ class CMainWindow(QtWidgets.QMainWindow):
     def on_combobox_contexts_changed(self, value):
         """Обработчик события от комбобокса контекстов."""
         self.update_grid()
+        self.config.store_value(c_config.CONTEXT_COMBO_KEY, self.comboBox_Contexts.currentIndex())
         # print("combobox changed", value)
         # do your code
 
@@ -193,6 +194,7 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def quit(self):
         """Завершает работу программы."""
+        self.config.write_config()
         self.close()
 
     def save_task(self):
