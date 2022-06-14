@@ -5,6 +5,8 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 
 import c_ancestor
 import c_context
+
+
 class CTask(c_ancestor.CAncestor):
     """Класс таблицы задач."""
 
@@ -19,9 +21,8 @@ class CTask(c_ancestor.CAncestor):
                    unique=True)
     # fnotice = Column(Text)
     furgency = Column(Integer,
-                     nullable=False
-                     )
-
+                      nullable=False
+                      )
 
     def __init__(self, pcontext, pdescription, purgency):
         """Конструктор"""
@@ -31,7 +32,6 @@ class CTask(c_ancestor.CAncestor):
         self.fdescription = pdescription
         self.furgency = purgency
 
-
     def __repr__(self):
         ancestor_repr = super().__repr__()
         return f"""{ancestor_repr},
@@ -40,11 +40,9 @@ class CTask(c_ancestor.CAncestor):
                    GUID:{self.fguid},
                    Notice:{self.furgency}"""
 
-
     def get_guid(self):
         """Возвращает сгенерированный GUID."""
         return self.fguid
-
 
     def guid_generation(self):
         """Генерирует GUID."""
