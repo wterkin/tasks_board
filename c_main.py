@@ -161,7 +161,8 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.nav_state(page)
         self.update_grid()
 
-    def on_combobox_contexts_changed(self, value):
+    # def on_combobox_contexts_changed(self, value):
+    def on_combobox_contexts_changed(self):
         """Обработчик события от комбобокса контекстов."""
         self.update_grid()
         self.config.store_value(c_config.CONTEXT_COMBO_KEY, self.comboBox_Contexts.currentIndex())
@@ -180,7 +181,7 @@ class CMainWindow(QtWidgets.QMainWindow):
             if tag_id is None:
 
                 # *** Тега такого еще нет в базе, добавляем
-                tag_object = c_tag.CTag(tag)
+                tag_object: c_tag.CTag = c_tag.CTag(tag)
                 self.database.get_session().add(tag_object)
                 self.database.get_session().commit()
                 # *** И снова ищем.
@@ -200,13 +201,14 @@ class CMainWindow(QtWidgets.QMainWindow):
     def save_task(self):
         """Сохраняет введённую задачу."""
 
-        description: str = self.lineEdit_Task.text()
-        if description:
+        task_name: str = self.lineEdit_Task.text()
+        if task_name:
 
             context_id: int = self.comboBox_Contexts.currentData()
             urgency: int = self.comboBox_Urgency.currentIndex()
-            task_object: object = c_task.CTask(context_id, description, urgency)
+            task_object: object = c_task.CTask(context_id, task_name, "", urgency)
             task_guid: str = task_object.get_guid()
+            # print(f"MN:ST:task ", task_object)
             self.database.get_session().add(task_object)
             self.database.get_session().commit()
             # *** Соберём введенные теги
@@ -226,6 +228,7 @@ class CMainWindow(QtWidgets.QMainWindow):
             self.database.get_session().commit()
             self.lineEdit_Task.clear()
             self.lineEdit_Tags.clear()
+            self.update_grid()
 
     def set_tags_filter(self):
         """Включает или выключает фильтрацию по тегам."""

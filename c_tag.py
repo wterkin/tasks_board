@@ -14,7 +14,7 @@ class CTag(anc.CAncestor):
                     unique=True)
 
 
-    def __init__(self, pname):
+    def __init__(self, pname: object) -> object:
         """Конструктор"""
         super().__init__()
         self.fname = pname

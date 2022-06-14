@@ -117,4 +117,4 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         self.clear()
         for item in data:
 
-            self.appendRow(QtGui.QStandardItem(item.fdescription))
+            self.appendRow(QtGui.QStandardItem(item.fname))
