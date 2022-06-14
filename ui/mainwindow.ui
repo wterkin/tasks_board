@@ -59,6 +59,13 @@
         <widget class="QComboBox" name="comboBox_Contexts"/>
        </item>
        <item>
+        <widget class="QCheckBox" name="checkBox_AllComtexts">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="label_TagsFilter">
          <property name="text">
           <string>Фильтр по тегам</string>
