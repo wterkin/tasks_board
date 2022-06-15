@@ -56,12 +56,25 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_Contexts"/>
+        <widget class="QComboBox" name="comboBox_Contexts">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBox_AllComtexts">
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -74,6 +87,11 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEdit_TagsFilter">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="placeholderText">
           <string>#projectN #featureA</string>
          </property>
@@ -98,6 +116,13 @@
         </widget>
        </item>
        <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="label_TextFilter">
          <property name="text">
           <string>Фильтр по тексту</string>
@@ -106,6 +131,11 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEdit_TextFilter">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="placeholderText">
           <string>database query</string>
          </property>
@@ -126,6 +156,13 @@
            <width>22</width>
            <height>22</height>
           </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -421,6 +458,11 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="placeholderText">
           <string>Введите тэги новой задачи</string>
          </property>
@@ -435,6 +477,11 @@
        </item>
        <item>
         <widget class="QComboBox" name="comboBox_Urgency">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <item>
           <property name="text">
            <string>Совсем не срочно.</string>
@@ -481,6 +528,11 @@
            <width>0</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
          </property>
          <property name="placeholderText">
           <string>Введите текст новой задачи</string>
