@@ -465,6 +465,11 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLabel" name="label_Tags">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Теги</string>
          </property>
@@ -490,12 +495,40 @@
           </font>
          </property>
          <property name="placeholderText">
-          <string>Введите тэги новой задачи</string>
+          <string>project1 useredit</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton_TagSelector">
+         <property name="minimumSize">
+          <size>
+           <width>24</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>address-book-new.png</normaloff>address-book-new.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_Urgency">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Срочность</string>
          </property>
@@ -542,6 +575,11 @@
        </item>
        <item>
         <widget class="QLabel" name="label_Task">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Описание</string>
          </property>
@@ -561,7 +599,7 @@
           </font>
          </property>
          <property name="placeholderText">
-          <string>Введите текст новой задачи</string>
+          <string>Форма редактирования данных пользователя</string>
          </property>
         </widget>
        </item>

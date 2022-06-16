@@ -20,6 +20,7 @@ import c_tag
 import c_task
 import c_taglink
 import c_taskdatamodel
+import c_tagselector
 
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -84,6 +85,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.toolButton_TextFilter.clicked.connect(self.set_text_filter)
         self.toolButton_ViewCompleted.clicked.connect(self.view_completed)
         self.toolButton_ViewDeleted.clicked.connect(self.view_deleted)
+        self.toolButton_TagSelector.clicked.connect(self.tag_selector)
         self.fill_contexts_combo()
         self.comboBox_Contexts.currentIndexChanged.connect(self.on_combobox_contexts_changed)
         # *** Показываем окно
@@ -99,8 +101,8 @@ class CMainWindow(QtWidgets.QMainWindow):
             border-style: flat;
             padding: 0px 5px;
             }''')
-        self.lineEdit_Tags.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.lineEdit_Tags.customContextMenuRequested.connect(self.tag_menu)
+        # self.lineEdit_Tags.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.lineEdit_Tags.customContextMenuRequested.connect(self.tag_menu)
         self.show()
         self.nav_state(0)
         self.update_grid()
@@ -261,45 +263,12 @@ class CMainWindow(QtWidgets.QMainWindow):
     def set_text_filter(self):
         """Включает или выключает фильтрацию по тексту задачи."""
 
-    def tag_menu(self, pposition):
-        """Выводит меню тэгов"""
-
-        menu = QtWidgets.QMenu()
-        actions = []
-        tags_line = self.lineEdit_Tags.text()
-        # print("[1] ", tags_line)
-        if len(tags_line) > 0:
-
-            if " " in tags_line:
-
-                tag_list = tags_line.split()
-                # print("[2] ", tag_list)
-                tag_name = tag_list[-1]
-                tag_list.pop(tag_list.index(tag_name))
-                self.lineEdit_Tags.setText(" ".join(tag_list))
-                # print("[e] ", tag_name)
-
-            else:
-
-                tag_name = tags_line
-                self.lineEdit_Tags.setText(" ")
-            # print("-----", tag_list, tag_name)
-
-            query = self.database.get_session().query(c_tag.CTag.fname)
-            query = query.filter(c_tag.CTag.fname.like(f"%{tag_name}%"))
-            tag_list = query.all()
-            print("[4] ", tag_list)
-            for tag in tag_list[0]:
-
-                # actions.append(menu.addAction(tag))
-                menu_action = QtWidgets.QAction(tag, self)
-                menu_action.setData(tag)
-                menu_action.triggered.connect(self.actionClicked)
-                menu.addAction(menu_action)
-        # else:
-
-        menu.exec_(self.lineEdit_Tags.mapToGlobal(pposition))
-
+    def tag_selector(self):
+        """Вызывает окно селектора тэгов."""
+        window = c_tagselector.CTagSelector(pparent=self,
+                                            pdatabase=self.database,
+                                            papplication_folder=self.application_folder)
+        print("MN:TS:win ", window)
     def update_grid(self):
         """Обновляет содержимое грида."""
         tag_id = -1

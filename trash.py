@@ -148,3 +148,41 @@
         #print(f"*** Mn:fcc:contid {self.context_ids}")
         #print(f"*** Mn:fcc:contname {context_names}")
         #self.comboBox_Contexts.addItems(context_names)
+
+        def tag_menu(self, pposition):
+                """Выводит меню тэгов"""
+
+                menu = QtWidgets.QMenu()
+                actions = []
+                tags_line = self.lineEdit_Tags.text()
+                # print("[1] ", tags_line)
+                if len(tags_line) > 0:
+
+                        if " " in tags_line:
+
+                                tag_list = tags_line.split()
+                                # print("[2] ", tag_list)
+                                tag_name = tag_list[-1]
+                                tag_list.pop(tag_list.index(tag_name))
+                                self.lineEdit_Tags.setText(" ".join(tag_list))
+                                # print("[e] ", tag_name)
+
+                        else:
+
+                                tag_name = tags_line
+                                self.lineEdit_Tags.setText(" ")
+                        # print("-----", tag_list, tag_name)
+
+                        query = self.database.get_session().query(c_tag.CTag.fname)
+                        query = query.filter(c_tag.CTag.fname.like(f"%{tag_name}%"))
+                        tag_list = query.all()
+                        print("[4] ", tag_list)
+                        for tag in tag_list[0]:
+                                # actions.append(menu.addAction(tag))
+                                menu_action = QtWidgets.QAction(tag, self)
+                                menu_action.setData(tag)
+                                menu_action.triggered.connect(self.actionClicked)
+                                menu.addAction(menu_action)
+                # else:
+
+                menu.exec_(self.lineEdit_Tags.mapToGlobal(pposition))
