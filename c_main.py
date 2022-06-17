@@ -48,6 +48,11 @@ HEADER_TEXT = "Ты должен делать то, что должен."
 # ToDo: Добавить в грид колонки даты и тэгов
 
 
+def formalize_tags(ptags):
+    """Приводит тэги к нижнему регистру и выкидывает # из названий."""
+    clean_tags = ''.join(letter for letter in ptags if letter != "#")
+    return clean_tags.lower()
+
 class CMainWindow(QtWidgets.QMainWindow):
     """Класс."""
 
@@ -190,7 +195,6 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.nav_state(page)
         self.update_grid()
 
-    # def on_combobox_contexts_changed(self, value):
     def on_combobox_contexts_changed(self):
         """Обработчик события от комбобокса контекстов."""
         self.update_grid()
@@ -236,15 +240,12 @@ class CMainWindow(QtWidgets.QMainWindow):
             urgency: int = self.comboBox_Urgency.currentIndex()
             task_object: object = c_task.CTask(context_id, task_name, "", urgency)
             task_guid: str = task_object.get_guid()
-            # print(f"MN:ST:task ", task_object)
             self.database.get_session().add(task_object)
             self.database.get_session().commit()
             # *** Соберём введенные теги
-            entered_tags: str = self.lineEdit_Tags.text()  # comboBox_Tags
-            # entered_tags = None
+            entered_tags: str = formalize_tags(self.lineEdit_Tags.text())  # comboBox_Tags
             if not entered_tags:
                 entered_tags = c_database.EMPTY_TAG
-
             tag_name_list: list = entered_tags.split()
             # *** Поищем введенные теги в базе
             tag_id_list: list = self.parse_entered_tags(tag_name_list)
@@ -268,7 +269,14 @@ class CMainWindow(QtWidgets.QMainWindow):
         window = c_tagselector.CTagSelector(pparent=self,
                                             pdatabase=self.database,
                                             papplication_folder=self.application_folder)
-        print("MN:TS:win ", window)
+        window.show()
+        # print("MN:TS:afsh ")
+        # tag_line = window.get_tag_line()
+        # print("MN:TS:tl ", tag_line)
+        # if tag_line:
+        #
+        #     self.lineEdit_Tags.setText(tag_line)
+
     def update_grid(self):
         """Обновляет содержимое грида."""
         tag_id = -1
@@ -281,6 +289,10 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def update_button_state(self):
         """Управляет состояниями кнопок интерфейса."""
+
+    def update_tag_line(self, ptag_line):
+        """Обновляет строку тегов задачи."""
+        self.lineEdit_Tags.setText(ptag_line)
 
     def view_completed(self):
         """Показывает/скрывает завершенные задачи."""

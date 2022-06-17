@@ -2,16 +2,27 @@
 # -*- coding: utf-8 -*-
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.ru
 """Модуль класса селектора тегов."""
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore
 from PyQt5 import uic
+
 import c_tag
-from datetime import datetime
 
 
-# import c_constants as const
-# import c_tools as tls
+def create_separator():
+    """Возвращает стандартный разделитель."""
+
+    separator = QtWidgets.QFrame()
+    separator.setMinimumWidth(1)
+    separator.setFixedHeight(20)
+    separator.setFrameShape(QtWidgets.QFrame.HLine)
+    separator.setFrameShadow(QtWidgets.QFrame.Sunken)
+    separator.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+    return separator
+
 
 class CTagSelector(QtWidgets.QMainWindow):
+    """Реализует окно селектора тегов."""
+
     def __init__(self, pparent, pdatabase, papplication_folder):
         # *** Конструктор
         super(CTagSelector, self).__init__(pparent)
@@ -21,14 +32,15 @@ class CTagSelector(QtWidgets.QMainWindow):
         self.application_folder = papplication_folder
 
         uic_path = self.application_folder / "ui" / "tag_selector.ui"
-        # print("TS:LTL:path ", uic_path)
         uic.loadUi(uic_path, self)
+
         self.scroll_widget = QtWidgets.QWidget()
         self.scrollArea.setWidget(self.scroll_widget)
         self.scroll_layout = QtWidgets.QVBoxLayout()
         self.scroll_widget.setLayout(self.scroll_layout)
-        self.tag_list: list = self.load_tag_list()
-        print("TS:LTL:list ", self.tag_list)
+
+        self.check_box_list: list = []
+        self.toolButton_Ok.clicked.connect(self.button_ok)
         self.fill_scrollbox()
         self.show()
 
@@ -39,9 +51,21 @@ class CTagSelector(QtWidgets.QMainWindow):
 
     def fill_scrollbox(self):
         """Заполняет скроллбокс чекбоксами"""
-        for tag in self.tag_list:
+        tag_list: list = self.load_tag_list()
+        for tag in tag_list:
 
-            checkbox = QtWidgets.QCheckBox(tag[0])
-            checkbox.setCheckState(QtCore.Qt.Unchecked)
-            self.scroll_layout.addWidget(checkbox)
-            print(tag[0])
+            check_box = QtWidgets.QCheckBox(tag[0])
+            check_box.setCheckState(QtCore.Qt.Unchecked)
+            self.scroll_layout.addWidget(check_box)
+            self.scroll_layout.addWidget(create_separator())
+            self.check_box_list.append(check_box)
+
+    def button_ok(self):
+
+        tag_list: list = []
+        for checkbox in self.check_box_list:
+
+            if checkbox.isChecked():
+                tag_list.append(checkbox.text())
+        self.parent.update_tag_line(" ".join(tag_list))
+        self.close()
