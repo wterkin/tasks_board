@@ -14,7 +14,7 @@ APP_NAME: str = "tasks_board"
 HOME_PREFIX: str = expanduser("~")
 # if platform == "linux" or platform == "linux2":
 if platform in ("linux", "linux2"):
-    HOME_PREFIX += ".config"
+    HOME_PREFIX += "/.config"
 
 APP_FOLDER: str = f"{HOME_PREFIX}/.{APP_NAME}"
 CONFIG_FILE_NAME: str = f"{APP_NAME}.json"
