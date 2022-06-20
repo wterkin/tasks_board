@@ -10,7 +10,7 @@ from pathlib import Path
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
-import PyQt5.QtGui
+# import PyQt5.QtGui
 # from PyQt5.uic.properties import QtCore
 
 import c_database
@@ -46,12 +46,13 @@ HEADER_TEXT = "Ты должен делать то, что должен."
 # ToDo: Добавить в грид колонку контекстов, если установлена галочка
 # ToDo: Добавить цветовое выделение в зависимости от срочности
 # ToDo: Добавить в грид колонки даты и тэгов
-
+# ToDo: При чтении из конфига
 
 def formalize_tags(ptags):
     """Приводит тэги к нижнему регистру и выкидывает # из названий."""
     clean_tags = ''.join(letter for letter in ptags if letter != "#")
     return clean_tags.lower()
+
 
 class CMainWindow(QtWidgets.QMainWindow):
     """Класс."""
@@ -111,16 +112,14 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.show()
         self.nav_state(0)
         self.update_grid()
-        self.comboBox_Contexts.setCurrentIndex(self.config.restore_value(c_config.CONTEXT_COMBO_KEY))
+        combo_index = self.config.restore_value(c_config.CONTEXT_COMBO_KEY)
+        if combo_index:
+
+            self.comboBox_Contexts.setCurrentIndex(combo_index)
         # *** Компоненты
         # lineEdit_TagsFilter
         # lineEdit_TextFilter
         # statusBar
-
-    def actionClicked(self):
-        """Обработчик выбора пункта меню."""
-        action = self.sender()
-        self.lineEdit_Tags.setText(self.lineEdit_Tags.text() +" " + action.text())
 
     def complete_task(self):
         """Завершает задачу"""

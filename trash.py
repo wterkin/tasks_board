@@ -172,7 +172,6 @@
                                 tag_name = tags_line
                                 self.lineEdit_Tags.setText(" ")
                         # print("-----", tag_list, tag_name)
-
                         query = self.database.get_session().query(c_tag.CTag.fname)
                         query = query.filter(c_tag.CTag.fname.like(f"%{tag_name}%"))
                         tag_list = query.all()
@@ -186,3 +185,10 @@
                 # else:
 
                 menu.exec_(self.lineEdit_Tags.mapToGlobal(pposition))
+
+
+        def actionClicked(self):
+                """Обработчик выбора пункта меню."""
+                action = self.sender()
+                self.lineEdit_Tags.setText(self.lineEdit_Tags.text() + " " + action.text())
+
