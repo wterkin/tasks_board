@@ -7,7 +7,7 @@ from PyQt5 import QtGui, QtCore
 import c_task
 
 ROWS_IN_PAGE = 10  # 25
-HORIZONTAL_HEADERS = ("Задачи", "")
+HORIZONTAL_HEADERS = ("ID", "Задачи", "")
 
 
 class CTaskDataModel(QtGui.QStandardItemModel):
@@ -19,7 +19,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         self.database = pdatabase
         self.page: int = 0
         self.row_count: int = ROWS_IN_PAGE
-        self.col_count: int = 1
+        self.col_count: int = 2
         self.page_count: int = 0
         self.context_id: int = 0
         self.tag_id: int = 0
@@ -83,8 +83,10 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         """Возвращает подготовленный объект запроса для разных операций."""
         query = self.database.get_session().query(c_task.CTask)
         if self.context_id > 0:
+
             query = query.filter_by(fcontext=self.context_id)
         if self.tag_id > 0:
+
             query = query.filter_by(ftag=self.tag_id)
         return query
 
@@ -114,4 +116,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         data = query.all()
         self.clear()
         for item in data:
-            self.appendRow(QtGui.QStandardItem(item.fname))
+
+            # self.appendRow(QtGui.QStandardItem([item.id, item.fname]))
+            # print("TDM:UP: ",item)
+            self.appendRow([QtGui.QStandardItem(str(item.id)), QtGui.QStandardItem(item.fname)])

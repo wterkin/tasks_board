@@ -25,6 +25,8 @@ DATABASE_VERSION = 1
 
 STANDARD_CONTEXTS = ("Дом", "DIY", "Работа")
 EMPTY_TAG = "<Пусто>"
+
+
 class CDataBase():
     """Класс."""
     def __init__(self, p_config):
@@ -33,24 +35,22 @@ class CDataBase():
         self.application_folder = Path.cwd()
         self.config = p_config
         self.session = None
+        self.engine = None
         self.connect()
-
 
     def check(self):
         """Проверяет базу на соответствие ее структуры классам."""
 
-
     def connect(self):
         """Устанавливает соединение с БД."""
         database_path: str = self.config.restore_value(c_config.DATABASE_FILE_KEY)
-        print("CDB:CNN:DBP ", database_path)
-        self.engine = create_engine('sqlite:///'+database_path, echo=True)
+        # print("CDB:CNN:DBP ", database_path)
+        self.engine = create_engine('sqlite:///'+database_path, echo=False)
         session = sessionmaker()
         session.configure(bind=self.engine)
         self.session = session()
 
         c_ancestor.Base.metadata.bind = self.engine
-
 
     def create(self):
         """Создает или изменяет БД в соответствии с описанной в классах структурой."""
@@ -66,18 +66,15 @@ class CDataBase():
         self.session.add(tag_object)
         self.session.commit()
 
-
     def disconnect(self):
         """Разрывает соединение с БД."""
         self.session.close()
         self.engine.dispose()
 
-
     def exists(self):
         """Проверяет наличие базы данных по пути в конфигурации."""
         db_folder_path = Path(self.config.restore_value(c_config.DATABASE_FILE_KEY))
         return db_folder_path.exists()
-
 
     def get_session(self):
         """Возвращает экземпляр session."""

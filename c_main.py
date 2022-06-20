@@ -21,6 +21,7 @@ import c_task
 import c_taglink
 import c_taskdatamodel
 import c_tagselector
+import c_taskedit
 
 PROGRAM_VERSION = "0.0"
 MAIN_WINDOW_FORM = "mainwindow.ui"
@@ -46,6 +47,7 @@ HEADER_TEXT = "Ты должен делать то, что должен."
 # ToDo: Добавить в грид колонку контекстов, если установлена галочка
 # ToDo: Добавить цветовое выделение в зависимости от срочности
 # ToDo: Добавить в грид колонки даты и тэгов
+# ToDo: В модели навигация хромает
 
 HEADER_STYLE = '''
                    ::section {
@@ -101,8 +103,13 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.fill_contexts_combo()
         self.comboBox_Contexts.currentIndexChanged.connect(self.on_combobox_contexts_changed)
         # *** Показываем окно
+        # print("Mn:In:1")
         self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
+        # print("Mn:In:2")
+        self.tableView_Main.hideColumn(0)
         self.tableView_Main.setModel(self.task_model)
+        # self.tableView_Main.setColumnHidden(1, True)
+        # print("Mn:In:3")
         header = self.tableView_Main.horizontalHeader()
         header.setSectionResizeMode(header.Stretch)
         header.setStyleSheet(HEADER_STYLE)
@@ -125,7 +132,13 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Удаляет задачу"""
 
     def edit_task(self):
-        """Добавляет новую задачу"""
+        """Изменяет ранее введенную задачу."""
+        """Вызывает окно селектора тэгов."""
+        window = c_taskedit.CTaskEdit(pparent=self,
+                                      pdatabase=self.database,
+                                      papplication_folder=self.application_folder)
+        # self.ModelsTable.currentIndex()))
+        window.show()
 
     def fill_contexts_combo(self):
         """Заполняет выпадающий список контекстов."""
