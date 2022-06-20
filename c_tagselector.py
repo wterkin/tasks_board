@@ -25,20 +25,18 @@ class CTagSelector(QtWidgets.QMainWindow):
 
     def __init__(self, pparent, pdatabase, papplication_folder):
         # *** Конструктор
-        super(CTagSelector, self).__init__(pparent)
+        # super(CTagSelector, self).__init__(pparent)
+        super().__init__()
         # *** Сохраняем параметры
         self.parent = pparent
         self.database = pdatabase
         self.application_folder = papplication_folder
-
         uic_path = self.application_folder / "ui" / "tag_selector.ui"
         uic.loadUi(uic_path, self)
-
         self.scroll_widget = QtWidgets.QWidget()
         self.scrollArea.setWidget(self.scroll_widget)
         self.scroll_layout = QtWidgets.QVBoxLayout()
         self.scroll_widget.setLayout(self.scroll_layout)
-
         self.check_box_list: list = []
         self.toolButton_Ok.clicked.connect(self.button_ok)
         self.fill_scrollbox()
@@ -47,7 +45,6 @@ class CTagSelector(QtWidgets.QMainWindow):
     def load_tag_list(self):
         """Загружает список тэгов из базы."""
         return self.database.get_session().query(c_tag.CTag.fname).all()
-        # query = query.filter(c_tag.CTag.fname.like(f"%{tag_name}%"))
 
     def fill_scrollbox(self):
         """Заполняет скроллбокс чекбоксами"""
@@ -61,11 +58,12 @@ class CTagSelector(QtWidgets.QMainWindow):
             self.check_box_list.append(check_box)
 
     def button_ok(self):
-
+        """Обработчик нажатия кнопки 'Ok'"""
         tag_list: list = []
         for checkbox in self.check_box_list:
 
             if checkbox.isChecked():
+
                 tag_list.append(checkbox.text())
         self.parent.update_tag_line(" ".join(tag_list))
         self.close()

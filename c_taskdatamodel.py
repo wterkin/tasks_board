@@ -1,31 +1,33 @@
 #!/usr/bin/python
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # @author: Andrey Pakhomenkov pakhomenkov@yandex.rufrom PyQt5 import QtCore, QtGui, QtWidgets
 """Модель для таблицы задач."""
 from PyQt5 import QtGui, QtCore
 
 import c_task
 
-ROWS_IN_PAGE = 10 #  25
-HORIZONTAL_HEADERS = ("Задачи","")
+ROWS_IN_PAGE = 10  # 25
+HORIZONTAL_HEADERS = ("Задачи", "")
+
 
 class CTaskDataModel(QtGui.QStandardItemModel):
     """Класс модели таблицы задач."""
 
-    def __init__(self, pdatabase): #  parent,
+    def __init__(self, pdatabase):  # parent,
         """Конструктор."""
         QtGui.QStandardItemModel.__init__(self)
         self.database = pdatabase
         self.page: int = 0
         self.row_count: int = ROWS_IN_PAGE
         self.col_count: int = 1
+        self.page_count: int = 0
         self.context_id: int = 0
         self.tag_id: int = 0
         self.update_model()
         self.setHorizontalHeaderLabels(HORIZONTAL_HEADERS)
         self.setHeaderData(0, QtCore.Qt.Horizontal, QtCore.Qt.AlignJustify, QtCore.Qt.TextAlignmentRole)
 
-    def columnCount(self, index): #  pylint: disable=invalid-name, unused-argument,
+    def columnCount(self, index):  # pylint: disable=invalid-name, unused-argument,
         """Возвращает количество столбцов в наборе данных."""
         return self.col_count
 
@@ -43,11 +45,12 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         """Возвращает количество страниц в наборе данных."""
         return self.page_count
 
-    def headerData(self, section, orientation, role): #  pylint: disable=invalid-name, no-self-use
+    def headerData(self, section, orientation, role):  # pylint: disable=invalid-name, no-self-use
         """Возвращает заголовок таблицы."""
         if role == QtCore.Qt.DisplayRole:
+
             if orientation == QtCore.Qt.Horizontal:
-                return ["Задачи", ] #  [section]
+                return ["Задачи", ]
             if orientation == QtCore.Qt.Vertical:
                 return f"{section}"
         return ""
@@ -61,7 +64,6 @@ class CTaskDataModel(QtGui.QStandardItemModel):
     def next_page(self):
         """Переключаемся на следующую страницу данных."""
         if self.page < (self.page_count - 1):
-
             self.page += 1
         self.update()
         return self.page
@@ -73,8 +75,7 @@ class CTaskDataModel(QtGui.QStandardItemModel):
     def prev_page(self):
         """Переключаемся на предыдущую страницу данных."""
         if self.page > 0:
-
-            self.page -=1
+            self.page -= 1
         self.update()
         return self.page
 
@@ -82,10 +83,8 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         """Возвращает подготовленный объект запроса для разных операций."""
         query = self.database.get_session().query(c_task.CTask)
         if self.context_id > 0:
-
             query = query.filter_by(fcontext=self.context_id)
         if self.tag_id > 0:
-
             query = query.filter_by(ftag=self.tag_id)
         return query
 
@@ -102,11 +101,10 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         self.tag_id = ptag_id
 
     def update_model(self):
-        """Обновляет настройки модели в соотвествии с состоянием базы."""
+        """Обновляет настройки модели в соответствии с состоянием базы."""
         task_count = self.query_task_count()
         self.page_count = task_count // ROWS_IN_PAGE
         if task_count % ROWS_IN_PAGE > 0:
-
             self.page_count += 1
 
     def update(self):
@@ -116,5 +114,4 @@ class CTaskDataModel(QtGui.QStandardItemModel):
         data = query.all()
         self.clear()
         for item in data:
-
             self.appendRow(QtGui.QStandardItem(item.fname))

@@ -30,8 +30,12 @@ HEADER_TEXT = "Ты должен делать то, что должен."
 
 # Done: Комбик контекстов маловат. Удлинить и увеличить шрифт
 # Done: Вставить разделитель перед фильтром по тэгам, да и вообще натыкать их побольше
-# ToDo: Вместо строки ввода тэга влепить комбик lineEdit_Tags comboBox_Tags
-# ToDo: Фильтровать содержимое комбика в зависимости от введенной строки
+# Done: Вместо строки ввода тэга влепить комбик lineEdit_Tags comboBox_Tags
+# Done: Фильтровать содержимое комбика в зависимости от введенной строки
+# Done: Найти иконку для просмотра выполненных задач
+# Done: Найти иконку для корзины
+# Done: Сделать серые варианты этих иконок
+# Done: При чтении из конфига
 # ToDo: Реализовать отметку задачи выполненной
 # ToDo: Реализовать удаление
 # ToDo: Реализовать редактирование
@@ -39,17 +43,19 @@ HEADER_TEXT = "Ты должен делать то, что должен."
 # ToDo: Реализовать фильтр по тэгам
 # ToDo: Реализовать фильтр по тексту
 # ToDo: Сделать иконки фильтров динамическими
-# Done: Найти иконку для просмотра выполненных задач
-# Done: Найти иконку для корзины
-# Done: Сделать серые варианты этих иконок
-# ToDo: Сделать эти иконки динамическими
 # ToDo: Добавить в грид колонку контекстов, если установлена галочка
 # ToDo: Добавить цветовое выделение в зависимости от срочности
 # ToDo: Добавить в грид колонки даты и тэгов
-# ToDo: При чтении из конфига
+
+HEADER_STYLE = '''
+                   ::section {
+                     background-color: lightgray;
+                     border-style: flat;
+                     padding: 0px 5px;
+                    }'''
 
 def formalize_tags(ptags):
-    """Приводит тэги к нижнему регистру и выкидывает # из названий."""
+    """Приводит теги к нижнему регистру и выкидывает # из названий."""
     clean_tags = ''.join(letter for letter in ptags if letter != "#")
     return clean_tags.lower()
 
@@ -65,7 +71,6 @@ class CMainWindow(QtWidgets.QMainWindow):
 
         # *** Конфигурация
         self.config: c_config.CConfiguration = c_config.CConfiguration()
-        # exit()        # self.quit()
         self.context_ids: list = []
 
         # *** Интерфейс
@@ -76,6 +81,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         # *** База данных
         self.database: c_database.CDataBase = c_database.CDataBase(self.config)
         if not self.database.exists():
+
             self.database.create()
         # *** Обработчики кнопок
         self.toolButton_CompleteTask.clicked.connect(self.complete_task)
@@ -97,18 +103,9 @@ class CMainWindow(QtWidgets.QMainWindow):
         # *** Показываем окно
         self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
         self.tableView_Main.setModel(self.task_model)
-        # self.tableView_Main.verticalHeader().hide()
         header = self.tableView_Main.horizontalHeader()
         header.setSectionResizeMode(header.Stretch)
-        # header.setStyleSheet("background-color:lightgrey;");
-        header.setStyleSheet('''
-            ::section {
-            background-color: lightgray;
-            border-style: flat;
-            padding: 0px 5px;
-            }''')
-        # self.lineEdit_Tags.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.lineEdit_Tags.customContextMenuRequested.connect(self.tag_menu)
+        header.setStyleSheet(HEADER_STYLE)
         self.show()
         self.nav_state(0)
         self.update_grid()
@@ -143,11 +140,7 @@ class CMainWindow(QtWidgets.QMainWindow):
     def get_tag_id(self):
         """Возвращает ID первого введенного тега."""
         tag: str = self.lineEdit_Tags.text().split()[0]  # comboBox_Tags
-        # tag_id: int = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
         return self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
-        # if tag_id is nNone:
-        # return tag_id
-        # return None
 
     def nav_state(self, page):
         """Разрешает и запрещает кнопки навигации."""
@@ -198,14 +191,11 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Обработчик события от комбобокса контекстов."""
         self.update_grid()
         self.config.store_value(c_config.CONTEXT_COMBO_KEY, self.comboBox_Contexts.currentIndex())
-        # print("combobox changed", value)
-        # do your code
 
     def parse_entered_tags(self, ptag_name_list: list) -> list:
         """Парсит список введенных тегов, возвращает список ID тэгов в базе."""
-
         tag_id_list: list = []
-        tag_object: c_tag.CTag
+        # tag_object: c_tag.CTag
         for tag in ptag_name_list:
 
             # *** Получим ID тега
@@ -244,12 +234,14 @@ class CMainWindow(QtWidgets.QMainWindow):
             # *** Соберём введенные теги
             entered_tags: str = formalize_tags(self.lineEdit_Tags.text())  # comboBox_Tags
             if not entered_tags:
+
                 entered_tags = c_database.EMPTY_TAG
             tag_name_list: list = entered_tags.split()
             # *** Поищем введенные теги в базе
             tag_id_list: list = self.parse_entered_tags(tag_name_list)
             # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
             for tag_id in tag_id_list:
+
                 taglink_object = c_taglink.CTagLink(tag_id, task_guid)
                 self.database.get_session().add(taglink_object)
             self.database.get_session().commit()
@@ -269,17 +261,12 @@ class CMainWindow(QtWidgets.QMainWindow):
                                             pdatabase=self.database,
                                             papplication_folder=self.application_folder)
         window.show()
-        # print("MN:TS:afsh ")
-        # tag_line = window.get_tag_line()
-        # print("MN:TS:tl ", tag_line)
-        # if tag_line:
-        #
-        #     self.lineEdit_Tags.setText(tag_line)
 
     def update_grid(self):
         """Обновляет содержимое грида."""
         tag_id = -1
         if self.lineEdit_Tags.text():
+
             tag_id = self.get_tag_id()
         self.task_model.set_context(self.comboBox_Contexts.currentData())
         self.task_model.set_tag(tag_id)
