@@ -56,6 +56,7 @@ HEADER_STYLE = '''
                      padding: 0px 5px;
                     }'''
 
+
 def formalize_tags(ptags):
     """Приводит теги к нижнему регистру и выкидывает # из названий."""
     clean_tags = ''.join(letter for letter in ptags if letter != "#")
@@ -157,6 +158,7 @@ class CMainWindow(QtWidgets.QMainWindow):
 
     def nav_state(self, page):
         """Разрешает и запрещает кнопки навигации."""
+        print("MN:NST:page ", page)
         if page == 0:
 
             self.toolButton_NavTop.setEnabled(False)
