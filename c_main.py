@@ -104,13 +104,11 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.fill_contexts_combo()
         self.comboBox_Contexts.currentIndexChanged.connect(self.on_combobox_contexts_changed)
         # *** Показываем окно
-        # print("Mn:In:1")
         self.task_model = c_taskdatamodel.CTaskDataModel(self.database)
-        # print("Mn:In:2")
+        self.tableView_Main.setColumnHidden(0, True)
+        self.tableView_Main.setColumnWidth(0, 1)
         self.tableView_Main.hideColumn(0)
         self.tableView_Main.setModel(self.task_model)
-        # self.tableView_Main.setColumnHidden(1, True)
-        # print("Mn:In:3")
         header = self.tableView_Main.horizontalHeader()
         header.setSectionResizeMode(header.Stretch)
         header.setStyleSheet(HEADER_STYLE)
@@ -125,6 +123,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         # lineEdit_TagsFilter
         # lineEdit_TextFilter
         # statusBar
+        self.tableView_Main.hideColumn(0)
 
     def complete_task(self):
         """Завершает задачу"""
@@ -135,10 +134,18 @@ class CMainWindow(QtWidgets.QMainWindow):
     def edit_task(self):
         """Изменяет ранее введенную задачу."""
         """Вызывает окно селектора тэгов."""
+        # row = self.tableView_Main.selectionModel()
+        idx = self.tableView_Main.currentIndex()
+        ident = self.tableView_Main.model().data(self.tableView_Main.model().index(idx.row(), 0))
+        # # QModelIndex
+        # # currentDiscount = ui->discountsTableView->currentIndex();
+        # qDebug() << ui->discountsTableView->model()->data(ui->discountsTableView->model()->index(currentDiscount.row(),
+        #                                                                                          1), 0);
+        print(idx, ident)
         window = c_taskedit.CTaskEdit(pparent=self,
                                       pdatabase=self.database,
-                                      papplication_folder=self.application_folder)
-        # self.ModelsTable.currentIndex()))
+                                      papplication_folder=self.application_folder,
+                                      pid = ident)
         window.show()
 
     def fill_contexts_combo(self):
@@ -287,6 +294,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.task_model.set_tag(tag_id)
         self.task_model.update()
         self.task_model.update_model()
+        self.tableView_Main.hideColumn(0)
 
     def update_button_state(self):
         """Управляет состояниями кнопок интерфейса."""

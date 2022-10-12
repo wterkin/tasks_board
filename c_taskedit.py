@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5 import uic
 
 import c_tag
+import c_task
 
 
 def create_separator():
@@ -23,15 +24,15 @@ def create_separator():
 class CTaskEdit(QtWidgets.QMainWindow):
     """Реализует окно селектора тегов."""
 
-    def __init__(self, pparent, pdatabase, papplication_folder):
+    def __init__(self, pparent, pdatabase, papplication_folder: str, pid: int):
         # *** Конструктор
         # super(CTagSelector, self).__init__(pparent)
         super().__init__()
         # *** Сохраняем параметры
         self.parent = pparent
         self.database = pdatabase
-        self.application_folder = papplication_folder
-        uic_path = self.application_folder / "ui" / "tag_selector.ui"
+        self.application_folder: str = papplication_folder
+        uic_path = self.application_folder / "ui" / "task_edit.ui"
         uic.loadUi(uic_path, self)
         self.scroll_widget = QtWidgets.QWidget()
         self.scrollArea.setWidget(self.scroll_widget)
@@ -40,6 +41,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.check_box_list: list = []
         self.toolButton_Ok.clicked.connect(self.button_ok)
         self.fill_scrollbox()
+        self.update(pid)
         self.show()
 
     def load_tag_list(self):
@@ -67,3 +69,15 @@ class CTaskEdit(QtWidgets.QMainWindow):
                 tag_list.append(checkbox.text())
         self.parent.update_tag_line(" ".join(tag_list))
         self.close()
+
+    def update(self, pid: int):
+        """Обновляет данные в окне."""
+        session = self.database.get_session
+        query = session.query(c_task.CTask)
+        query = query.filter(id=pid)
+        data = query.first()
+
+
+        if pid is not None:
+
+            pass
