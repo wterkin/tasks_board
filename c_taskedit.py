@@ -7,6 +7,7 @@ from PyQt5 import uic
 
 import c_tag
 import c_task
+import c_context
 
 
 def create_separator():
@@ -34,15 +35,34 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.application_folder: str = papplication_folder
         uic_path = self.application_folder / "ui" / "task_edit.ui"
         uic.loadUi(uic_path, self)
+        # ***
         self.scroll_widget = QtWidgets.QWidget()
         self.scrollArea.setWidget(self.scroll_widget)
         self.scroll_layout = QtWidgets.QVBoxLayout()
         self.scroll_widget.setLayout(self.scroll_layout)
         self.check_box_list: list = []
+        self.lineEdit_Name.setText("")
+        self.textEdit_Description.setText("")
+        self.comboBox_Contexts.setCurrentIndex(0)
         self.toolButton_Ok.clicked.connect(self.button_ok)
+        self.fill_context_list()
         self.fill_scrollbox()
-        self.update(pid)
+        # ***
+        self.load_data(pid)
         self.show()
+
+    def fill_context_list(self):
+        """Загружает список тэгов из базы."""
+        queried_data: object = self.database.get_session().query(c_context.CContext.id,
+                                                                 c_context.CContext.fname)
+        queried_data = queried_data.filter(c_context.CContext.fstatus > 0)
+        context_list: list = queried_data.all()
+        self.comboBox_Contexts.clear()
+        for context in context_list:
+            self.comboBox_Contexts.addItem(context[1], context[0])
+
+
+        # self.database.get_session().query(c_tag.CTag.fname).all()
 
     def load_tag_list(self):
         """Загружает список тэгов из базы."""
@@ -70,14 +90,18 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.parent.update_tag_line(" ".join(tag_list))
         self.close()
 
-    def update(self, pid: int):
+    def load_data(self, pid: int):
         """Обновляет данные в окне."""
-        session = self.database.get_session
+        session = self.database.get_session()
         query = session.query(c_task.CTask)
-        query = query.filter(id=pid)
-        data = query.first()
-
-
-        if pid is not None:
-
-            pass
+        query = query.filter(c_task.CTask.id==pid)
+        data: c_task.CTask = query.first()
+        # combobox_Contexts
+        # combobox_Urgencies
+        # lineEdit_Name
+        # textEdit_Description
+        # self.check_box_list
+        print(data)
+        self.lineEdit_Name.setText(data.fname)
+        self.textEdit_Description.setText(data.fdescription)
+        self.comboBox_Contexts.setCurrentIndex(data.fcontext-1)

@@ -70,6 +70,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Конструктор класса."""
         # super(CMainWindow, self).__init__()
         super().__init__()
+        self.task_edit = None
         self.application_folder: Path = Path.cwd()
 
         # *** Конфигурация
@@ -141,12 +142,12 @@ class CMainWindow(QtWidgets.QMainWindow):
         # # currentDiscount = ui->discountsTableView->currentIndex();
         # qDebug() << ui->discountsTableView->model()->data(ui->discountsTableView->model()->index(currentDiscount.row(),
         #                                                                                          1), 0);
-        print(idx, ident)
-        window = c_taskedit.CTaskEdit(pparent=self,
-                                      pdatabase=self.database,
-                                      papplication_folder=self.application_folder,
-                                      pid = ident)
-        window.show()
+        # print(idx, ident)
+        self.task_edit = c_taskedit.CTaskEdit(pparent=self,
+                                              pdatabase=self.database,
+                                              papplication_folder=self.application_folder,
+                                              pid = ident)
+        # window.show()
 
     def fill_contexts_combo(self):
         """Заполняет выпадающий список контекстов."""
