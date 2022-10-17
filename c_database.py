@@ -24,6 +24,10 @@ import c_tag
 DATABASE_VERSION = 1
 
 STANDARD_CONTEXTS = ("Дом", "DIY", "Работа")
+URGENCIES: tuple = ("Не срочно.",
+                    "Срочно!",
+                    "Очень срочно!!")
+
 EMPTY_TAG = "<Пусто>"
 
 

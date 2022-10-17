@@ -8,6 +8,7 @@ from PyQt5 import uic
 import c_tag
 import c_task
 import c_context
+import c_database
 
 
 def create_separator():
@@ -44,6 +45,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.lineEdit_Name.setText("")
         self.textEdit_Description.setText("")
         self.comboBox_Contexts.setCurrentIndex(0)
+        self.comboBox_Urgency.addItems(c_database.URGENCIES)
         self.toolButton_Ok.clicked.connect(self.button_ok)
         self.fill_context_list()
         self.fill_scrollbox()
@@ -58,6 +60,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         queried_data = queried_data.filter(c_context.CContext.fstatus > 0)
         context_list: list = queried_data.all()
         self.comboBox_Contexts.clear()
+        # self.comboBox_Contexts.addItems()
         for context in context_list:
             self.comboBox_Contexts.addItem(context[1], context[0])
 

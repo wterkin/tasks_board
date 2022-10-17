@@ -28,6 +28,9 @@ MAIN_WINDOW_FORM = "mainwindow.ui"
 FORM_FOLDER = "ui/"
 HEADER_TEXT = "Ты должен делать то, что должен."
 
+URGENCY_LIST: tuple = ("Не срочно.",
+                       "Срочно!",
+                       "Очень срочно!!")
 
 # Done: Комбик контекстов маловат. Удлинить и увеличить шрифт
 # Done: Вставить разделитель перед фильтром по тэгам, да и вообще натыкать их побольше
@@ -85,7 +88,6 @@ class CMainWindow(QtWidgets.QMainWindow):
         # *** База данных
         self.database: c_database.CDataBase = c_database.CDataBase(self.config)
         if not self.database.exists():
-
             self.database.create()
         # *** Обработчики кнопок
         self.toolButton_CompleteTask.clicked.connect(self.complete_task)
@@ -118,13 +120,21 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.update_grid()
         combo_index = self.config.restore_value(c_config.CONTEXT_COMBO_KEY)
         if combo_index:
-
             self.comboBox_Contexts.setCurrentIndex(combo_index)
+        self.comboBox_Urgency.addItems(c_database.URGENCIES)
         # *** Компоненты
         # lineEdit_TagsFilter
         # lineEdit_TextFilter
         # statusBar
         self.tableView_Main.hideColumn(0)
+        """
+        Совсем не срочно.
+        Достаточно срочно.
+        Срочно!
+        Очень срочно!!
+        Вот прям щаз!!!
+        Вчера!!!
+        """
 
     def complete_task(self):
         """Завершает задачу"""
@@ -146,7 +156,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.task_edit = c_taskedit.CTaskEdit(pparent=self,
                                               pdatabase=self.database,
                                               papplication_folder=self.application_folder,
-                                              pid = ident)
+                                              pid=ident)
         # window.show()
 
     def fill_contexts_combo(self):
@@ -257,14 +267,12 @@ class CMainWindow(QtWidgets.QMainWindow):
             # *** Соберём введенные теги
             entered_tags: str = formalize_tags(self.lineEdit_Tags.text())  # comboBox_Tags
             if not entered_tags:
-
                 entered_tags = c_database.EMPTY_TAG
             tag_name_list: list = entered_tags.split()
             # *** Поищем введенные теги в базе
             tag_id_list: list = self.parse_entered_tags(tag_name_list)
             # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
             for tag_id in tag_id_list:
-
                 taglink_object = c_taglink.CTagLink(tag_id, task_guid)
                 self.database.get_session().add(taglink_object)
             self.database.get_session().commit()
@@ -289,7 +297,6 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Обновляет содержимое грида."""
         tag_id = -1
         if self.lineEdit_Tags.text():
-
             tag_id = self.get_tag_id()
         self.task_model.set_context(self.comboBox_Contexts.currentData())
         self.task_model.set_tag(tag_id)

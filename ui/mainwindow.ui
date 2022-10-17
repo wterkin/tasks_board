@@ -541,36 +541,6 @@
            <pointsize>11</pointsize>
           </font>
          </property>
-         <item>
-          <property name="text">
-           <string>Совсем не срочно.</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Достаточно срочно.</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Срочно!</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Очень срочно!!</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Вот прям щаз!!!</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Вчера!!!</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item>
