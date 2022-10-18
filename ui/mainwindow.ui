@@ -536,11 +536,44 @@
        </item>
        <item>
         <widget class="QComboBox" name="comboBox_Urgency">
+         <property name="minimumSize">
+          <size>
+           <width>151</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
+         <item>
+          <property name="text">
+           <string>Не срочно.</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>document-open-recent.png</normaloff>document-open-recent.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Срочно!</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>dialog-warning.png</normaloff>dialog-warning.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Очень срочно!!!</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>emblem-urgent.png</normaloff>emblem-urgent.png</iconset>
+          </property>
+         </item>
         </widget>
        </item>
        <item>

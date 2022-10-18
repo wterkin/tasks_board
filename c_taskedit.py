@@ -4,11 +4,11 @@
 """Модуль класса селектора тегов."""
 from PyQt5 import QtWidgets, QtCore
 from PyQt5 import uic
+from pathlib import Path
 
 import c_tag
 import c_task
 import c_context
-import c_database
 
 
 def create_separator():
@@ -26,30 +26,31 @@ def create_separator():
 class CTaskEdit(QtWidgets.QMainWindow):
     """Реализует окно селектора тегов."""
 
-    def __init__(self, pparent, pdatabase, papplication_folder: str, pid: int):
+    def __init__(self, pparent, pdatabase, papplication_folder: Path, pid: int):
         # *** Конструктор
-        # super(CTagSelector, self).__init__(pparent)
         super().__init__()
         # *** Сохраняем параметры
         self.parent = pparent
         self.database = pdatabase
-        self.application_folder: str = papplication_folder
+        self.application_folder: Path = papplication_folder
+        # *** Грузим интерфейс
         uic_path = self.application_folder / "ui" / "task_edit.ui"
-        uic.loadUi(uic_path, self)
-        # ***
+        uic.loadUi(uic_path.name, self)
+        # *** Создаем прокручиваемый список чекбоксов для меток
         self.scroll_widget = QtWidgets.QWidget()
         self.scrollArea.setWidget(self.scroll_widget)
         self.scroll_layout = QtWidgets.QVBoxLayout()
         self.scroll_widget.setLayout(self.scroll_layout)
+        # *** Список чекбоксов меток
         self.check_box_list: list = []
-        self.lineEdit_Name.setText("")
-        self.textEdit_Description.setText("")
-        self.comboBox_Contexts.setCurrentIndex(0)
-        self.comboBox_Urgency.addItems(c_database.URGENCIES)
-        self.toolButton_Ok.clicked.connect(self.button_ok)
+        # *** Инициализируем элементы формы
+        self.lineEdit_Name.setText("")  # noqa
+        self.textEdit_Description.setText("")  # noqa
         self.fill_context_list()
+        self.comboBox_Contexts.setCurrentIndex(0)  # noqa
+        self.comboBox_Urgencies.setCurrentIndex(0)  # noqa
+        self.toolButton_Ok.clicked.connect(self.button_ok)
         self.fill_scrollbox()
-        # ***
         self.load_data(pid)
         self.show()
 
@@ -59,16 +60,13 @@ class CTaskEdit(QtWidgets.QMainWindow):
                                                                  c_context.CContext.fname)
         queried_data = queried_data.filter(c_context.CContext.fstatus > 0)
         context_list: list = queried_data.all()
-        self.comboBox_Contexts.clear()
-        # self.comboBox_Contexts.addItems()
+        self.comboBox_Contexts.clear()  # noqa
         for context in context_list:
-            self.comboBox_Contexts.addItem(context[1], context[0])
 
-
-        # self.database.get_session().query(c_tag.CTag.fname).all()
+            self.comboBox_Contexts.addItem(context[1], context[0])  # noqa
 
     def load_tag_list(self):
-        """Загружает список тэгов из базы."""
+        """Загружает список меток из базы."""
         return self.database.get_session().query(c_tag.CTag.fname).all()
 
     def fill_scrollbox(self):
@@ -97,7 +95,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         """Обновляет данные в окне."""
         session = self.database.get_session()
         query = session.query(c_task.CTask)
-        query = query.filter(c_task.CTask.id==pid)
+        query = query.filter(c_task.CTask.id == pid)
         data: c_task.CTask = query.first()
         # combobox_Contexts
         # combobox_Urgencies
@@ -105,6 +103,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         # textEdit_Description
         # self.check_box_list
         print(data)
-        self.lineEdit_Name.setText(data.fname)
-        self.textEdit_Description.setText(data.fdescription)
-        self.comboBox_Contexts.setCurrentIndex(data.fcontext-1)
+        self.lineEdit_Name.setText(data.fname)  # noqa
+        self.textEdit_Description.setText(data.fdescription)  # noqa
+        self.comboBox_Contexts.setCurrentIndex(data.fcontext-1)  # noqa
+        self.comboBox_Urgencies.setCurrentIndex(data.furgency-1)  # noqa

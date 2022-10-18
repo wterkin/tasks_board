@@ -121,20 +121,12 @@ class CMainWindow(QtWidgets.QMainWindow):
         combo_index = self.config.restore_value(c_config.CONTEXT_COMBO_KEY)
         if combo_index:
             self.comboBox_Contexts.setCurrentIndex(combo_index)
-        self.comboBox_Urgency.addItems(c_database.URGENCIES)
+        # self.comboBox_Urgency.addItems(c_database.URGENCIES)
         # *** Компоненты
         # lineEdit_TagsFilter
         # lineEdit_TextFilter
         # statusBar
         self.tableView_Main.hideColumn(0)
-        """
-        Совсем не срочно.
-        Достаточно срочно.
-        Срочно!
-        Очень срочно!!
-        Вот прям щаз!!!
-        Вчера!!!
-        """
 
     def complete_task(self):
         """Завершает задачу"""
@@ -148,9 +140,10 @@ class CMainWindow(QtWidgets.QMainWindow):
         # row = self.tableView_Main.selectionModel()
         idx = self.tableView_Main.currentIndex()
         ident = self.tableView_Main.model().data(self.tableView_Main.model().index(idx.row(), 0))
-        # # QModelIndex
-        # # currentDiscount = ui->discountsTableView->currentIndex();
-        # qDebug() << ui->discountsTableView->model()->data(ui->discountsTableView->model()->index(currentDiscount.row(),
+        # QModelIndex
+        # currentDiscount = ui->discountsTableView->currentIndex();
+        # qDebug() << ui->discountsTableView->model()->data(ui->discountsTableView->model()->
+        # index(currentDiscount.row(),
         #                                                                                          1), 0);
         # print(idx, ident)
         self.task_edit = c_taskedit.CTaskEdit(pparent=self,
