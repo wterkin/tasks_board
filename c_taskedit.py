@@ -6,9 +6,10 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5 import uic
 from pathlib import Path
 
-import c_tag
-import c_task
-import c_context
+from c_tag import CTag
+from c_taglink import CTagLink
+from c_task import CTask
+from c_context import CContext
 
 
 def create_separator():
@@ -34,8 +35,8 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.database = pdatabase
         self.application_folder: Path = papplication_folder
         # *** Грузим интерфейс
-        uic_path = self.application_folder / "ui" / "task_edit.ui"
-        uic.loadUi(uic_path.name, self)
+        uic_path: Path = self.application_folder / "ui" / "task_edit.ui"
+        uic.loadUi(uic_path, self)
         # *** Создаем прокручиваемый список чекбоксов для меток
         self.scroll_widget = QtWidgets.QWidget()
         self.scrollArea.setWidget(self.scroll_widget)
@@ -56,9 +57,9 @@ class CTaskEdit(QtWidgets.QMainWindow):
 
     def fill_context_list(self):
         """Загружает список тэгов из базы."""
-        queried_data: object = self.database.get_session().query(c_context.CContext.id,
-                                                                 c_context.CContext.fname)
-        queried_data = queried_data.filter(c_context.CContext.fstatus > 0)
+        queried_data: object = self.database.get_session().query(CContext.id,
+                                                                 CContext.fname)
+        queried_data = queried_data.filter(CContext.fstatus > 0)
         context_list: list = queried_data.all()
         self.comboBox_Contexts.clear()  # noqa
         for context in context_list:
@@ -67,7 +68,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
 
     def load_tag_list(self):
         """Загружает список меток из базы."""
-        return self.database.get_session().query(c_tag.CTag.fname).all()
+        return self.database.get_session().query(CTag.fname).all()
 
     def fill_scrollbox(self):
         """Заполняет скроллбокс чекбоксами"""
@@ -94,16 +95,27 @@ class CTaskEdit(QtWidgets.QMainWindow):
     def load_data(self, pid: int):
         """Обновляет данные в окне."""
         session = self.database.get_session()
-        query = session.query(c_task.CTask)
-        query = query.filter(c_task.CTask.id == pid)
-        data: c_task.CTask = query.first()
-        # combobox_Contexts
-        # combobox_Urgencies
-        # lineEdit_Name
-        # textEdit_Description
-        # self.check_box_list
-        print(data)
-        self.lineEdit_Name.setText(data.fname)  # noqa
-        self.textEdit_Description.setText(data.fdescription)  # noqa
-        self.comboBox_Contexts.setCurrentIndex(data.fcontext-1)  # noqa
-        self.comboBox_Urgencies.setCurrentIndex(data.furgency-1)  # noqa
+        # query = session.query(CTask, CTag)
+        query = session.query(CTask, CTag)
+        query = query.filter(CTask.id == pid)
+        query = query.join(CTagLink, CTagLink.ftask == CTask.fguid)
+        query = query.join(CTag, CTag.id == CTagLink.ftag)
+        data = query.all()
+        task: CTask = data[0][0]
+        # print(data[1][1])
+        # print("-"*20)
+        # print(task.id)
+        # print(task.fstatus)
+        # print(task.fcontext)
+        # print("="*20)
+        # ToDo: вот тут надо узнать, как получить данные
+        context_index: int = self.comboBox_Contexts.currentData()[task.fcontext]  # noqa
+        self.comboBox_Contexts.setCurrentIndex(context_index)  # noqa
+        self.lineEdit_Name.setText(task.fname)  # noqa
+        self.textEdit_Description.setText(task.fdescription)  # noqa
+        self.comboBox_Urgencies.setCurrentIndex(task.furgency)  # noqa
+        tags: list = []
+        for tag in data:
+
+            tags.append(tag[1].fname)
+        print(tags)

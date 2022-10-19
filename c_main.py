@@ -120,6 +120,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.update_grid()
         combo_index = self.config.restore_value(c_config.CONTEXT_COMBO_KEY)
         if combo_index:
+
             self.comboBox_Contexts.setCurrentIndex(combo_index)
         # self.comboBox_Urgency.addItems(c_database.URGENCIES)
         # *** Компоненты
@@ -160,6 +161,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         context_list: list = queried_data.all()
         self.comboBox_Contexts.clear()
         for context in context_list:
+
             self.comboBox_Contexts.addItem(context[1], context[0])
 
     def get_tag_id(self):

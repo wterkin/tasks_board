@@ -17,7 +17,6 @@ class CTagLink(anc.CAncestor):
     ftag = Column(Integer, ForeignKey(c_tag.CTag.id))
     ftask = Column(String, ForeignKey(c_task.CTask.fguid))
 
-
     def __init__(self, ptag: int, ptask: str):
         """Конструктор"""
         super().__init__()

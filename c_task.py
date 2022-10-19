@@ -45,7 +45,7 @@ class CTask(c_ancestor.CAncestor):
                    Name:{self.fname},
                    Desc:{self.fdescription},
                    GUID:{self.fguid},
-                   Notice:{self.furgency},
+                   Urgency:{self.furgency},
                    Datetime:{self.fdatetime}"""
 
     def get_guid(self):
