@@ -111,7 +111,8 @@ class CTaskDataModel(QtGui.QStandardItemModel):
 
     def update(self):
         """Обновляет данные в таблице"""
-        query = self.get_query().offset(self.page * ROWS_IN_PAGE)
+        query = self.get_query().filter(c_task.CTask.fstatus > 0)
+        query = query.offset(self.page * ROWS_IN_PAGE)
         query = query.limit(ROWS_IN_PAGE)
         data = query.all()
         self.clear()

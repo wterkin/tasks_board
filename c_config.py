@@ -53,9 +53,9 @@ class CConfiguration():
     def store_value(self, pkey: str, pvalue: str) -> bool:
         """Сохраняет заданное значение по заданному ключу в словарь конфигурации."""
         result = False
-        if pkey:
+        if pkey is not None:
 
-            if pvalue:
+            if pvalue is not None:
 
                 self.config[pkey] = pvalue
                 result = True

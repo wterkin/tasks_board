@@ -102,20 +102,30 @@ class CTaskEdit(QtWidgets.QMainWindow):
         query = query.join(CTag, CTag.id == CTagLink.ftag)
         data = query.all()
         task: CTask = data[0][0]
-        # print(data[1][1])
+        # tags: [] = data[1]
+        # print(data[0][1])
         # print("-"*20)
-        # print(task.id)
+        # print(tags)
         # print(task.fstatus)
         # print(task.fcontext)
         # print("="*20)
         # ToDo: вот тут надо узнать, как получить данные
-        context_index: int = self.comboBox_Contexts.currentData()[task.fcontext]  # noqa
-        self.comboBox_Contexts.setCurrentIndex(context_index)  # noqa
+        # print("*** TE:LD:curdat", self.comboBox_Contexts.currentData())
+        context_index: int = self.comboBox_Contexts.findData(task.fcontext)  # noqa
+        self.comboBox_Contexts.setCurrentIndex(context_index)
+
+        # self.comboBox_Contexts.setCurrentIndex(context_index)  # noqa
         self.lineEdit_Name.setText(task.fname)  # noqa
         self.textEdit_Description.setText(task.fdescription)  # noqa
         self.comboBox_Urgencies.setCurrentIndex(task.furgency)  # noqa
         tags: list = []
-        for tag in data:
+        # print("*** TE:LD:dt1 ", data[0][0])
+        # print("="*20)
+        # print("*** TE:LD:dt2 ", data[0][1])
+        # print("="*20)
+        # print("*** TE:LD:dt3 ", data[1][0])
+        for task in data:
 
-            tags.append(tag[1].fname)
-        print(tags)
+            print("*** TE:LD:task ", task[1])
+        #     tags.append(tag.fname)
+        # print("*** TE:LD:tgs ", tags)

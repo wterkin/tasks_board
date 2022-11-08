@@ -119,8 +119,10 @@ class CMainWindow(QtWidgets.QMainWindow):
         self.nav_state(0)
         self.update_grid()
         combo_index = self.config.restore_value(c_config.CONTEXT_COMBO_KEY)
+        # print("*** MN:IN:cmbin ", combo_index)
         if combo_index:
 
+            # print("*** MN:IN:cmbind setted")
             self.comboBox_Contexts.setCurrentIndex(combo_index)
         # self.comboBox_Urgency.addItems(c_database.URGENCIES)
         # *** Компоненты
@@ -224,10 +226,12 @@ class CMainWindow(QtWidgets.QMainWindow):
         """Парсит список введенных тегов, возвращает список ID тэгов в базе."""
         tag_id_list: list = []
         # tag_object: c_tag.CTag
+        # print("*** MN:PET:TNL ", ptag_name_list)
         for tag in ptag_name_list:
 
             # *** Получим ID тега
             tag_id = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
+            # print("*** MN:PET:TID ", tag_id)
             if tag_id is None:
                 # *** Тега такого еще нет в базе, добавляем
                 tag_object: c_tag.CTag = c_tag.CTag(tag)
@@ -236,14 +240,17 @@ class CMainWindow(QtWidgets.QMainWindow):
                 # *** И снова ищем.
                 tag_id = self.database.get_session().query(c_tag.CTag.id).filter_by(fname=tag).first()
 
+            # print("*** MN:PET:TID2 ", tag_id)
             # *** Заносим ID тега в список и удаляем его из списка необработанных тегов
             tag_id_list.append(tag_id[0])
             tag_index = ptag_name_list.index(tag)
-            del ptag_name_list[tag_index]
+            # del ptag_name_list[tag_index]
+            # print("*** MN:PET: ", tag, tag_id, tag_index)
         return tag_id_list
 
     def quit(self):
         """Завершает работу программы."""
+        self.config.store_value(c_config.CONTEXT_COMBO_KEY, self.comboBox_Contexts.currentIndex())
         self.config.write_config()
         self.close()
 
@@ -262,14 +269,19 @@ class CMainWindow(QtWidgets.QMainWindow):
             # *** Соберём введенные теги
             entered_tags: str = formalize_tags(self.lineEdit_Tags.text())  # comboBox_Tags
             if not entered_tags:
+
                 entered_tags = c_database.EMPTY_TAG
             tag_name_list: list = entered_tags.split()
+            # print("*** MN:ST:TNL", tag_name_list)
             # *** Поищем введенные теги в базе
             tag_id_list: list = self.parse_entered_tags(tag_name_list)
+            # print("*** MN:ST:TIL", tag_id_list)
             # *** По-любому они теперь в базе. Нужно добавлять ссылки в таблицу ссылок
             for tag_id in tag_id_list:
+
                 taglink_object = c_taglink.CTagLink(tag_id, task_guid)
                 self.database.get_session().add(taglink_object)
+                print(tag_id)
             self.database.get_session().commit()
             self.lineEdit_Task.clear()
             self.lineEdit_Tags.clear()  # comboBox_Tags

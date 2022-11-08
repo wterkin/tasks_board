@@ -66,7 +66,7 @@ class CDataBase():
             context_object = c_context.CContext(context)
             self.session.add(context_object)
         tag_object = c_tag.CTag(EMPTY_TAG)
-        print("DB:CR:tag ", tag_object)
+        # print("DB:CR:tag ", tag_object)
         self.session.add(tag_object)
         self.session.commit()
 
