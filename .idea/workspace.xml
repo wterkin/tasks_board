@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5099b318-03d6-4ce2-b7d2-5fcce796d78f" name="Changes" comment="Сделал-таки джойн меток к задаче, разгребаю выхлоп">
+    <list default="true" id="5099b318-03d6-4ce2-b7d2-5fcce796d78f" name="Changes" comment="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/c_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c_database.py" beforeDir="false" afterPath="$PROJECT_DIR$/c_database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/c_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c_taskdatamodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/c_taskdatamodel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c_taskedit.py" beforeDir="false" afterPath="$PROJECT_DIR$/c_taskedit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +97,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666190663352</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()">
+      <created>1667915807498</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1667915807498</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -120,6 +124,7 @@
     <MESSAGE value="что-то делал тут опять..." />
     <MESSAGE value="Привёл в порядок форму редактирования задачи и выпадающий список срочности" />
     <MESSAGE value="Сделал-таки джойн меток к задаче, разгребаю выхлоп" />
-    <option name="LAST_COMMIT_MESSAGE" value="Сделал-таки джойн меток к задаче, разгребаю выхлоп" />
+    <MESSAGE value="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()" />
+    <option name="LAST_COMMIT_MESSAGE" value="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()" />
   </component>
 </project>

@@ -83,7 +83,7 @@ class CMainWindow(QtWidgets.QMainWindow):
         # *** Интерфейс
         uic.loadUi(self.application_folder / FORM_FOLDER / MAIN_WINDOW_FORM, self)
         self.setWindowTitle(f"Tasks board ver. {PROGRAM_VERSION} : \"{HEADER_TEXT}\"")
-        self.setWindowIcon(QtGui.QIcon('ui/tasks_board.ico'))
+        self.setWindowIcon(QtGui.QIcon('ui/tasks_board4.ico'))
 
         # *** База данных
         self.database: c_database.CDataBase = c_database.CDataBase(self.config)

@@ -55,6 +55,18 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.load_data(pid)
         self.show()
 
+    def button_ok(self):
+        """Обработчик нажатия кнопки 'Ok'"""
+        tag_list: list = []
+        for checkbox in self.check_box_list:
+
+            if checkbox.isChecked():
+
+                tag_list.append(checkbox.text())
+        self.parent.update_tag_line(" ".join(tag_list))
+        self.close()
+
+
     def fill_context_list(self):
         """Загружает список тэгов из базы."""
         queried_data: object = self.database.get_session().query(CContext.id,
@@ -66,9 +78,14 @@ class CTaskEdit(QtWidgets.QMainWindow):
 
             self.comboBox_Contexts.addItem(context[1], context[0])  # noqa
 
-    def load_tag_list(self):
-        """Загружает список меток из базы."""
-        return self.database.get_session().query(CTag.fname).all()
+    def get_task_data(self, pid):
+        session = self.database.get_session()
+        query = session.query(CTask, CTag)
+        query = query.filter(CTask.id == pid)
+        query = query.join(CTagLink, CTagLink.ftask == CTask.fguid)
+        query = query.join(CTag, CTag.id == CTagLink.ftag)
+        data = query.all()
+        return data
 
     def fill_scrollbox(self):
         """Заполняет скроллбокс чекбоксами"""
@@ -81,27 +98,41 @@ class CTaskEdit(QtWidgets.QMainWindow):
             self.scroll_layout.addWidget(create_separator())
             self.check_box_list.append(check_box)
 
-    def button_ok(self):
-        """Обработчик нажатия кнопки 'Ok'"""
-        tag_list: list = []
-        for checkbox in self.check_box_list:
-
-            if checkbox.isChecked():
-
-                tag_list.append(checkbox.text())
-        self.parent.update_tag_line(" ".join(tag_list))
-        self.close()
-
     def load_data(self, pid: int):
         """Обновляет данные в окне."""
-        session = self.database.get_session()
-        # query = session.query(CTask, CTag)
-        query = session.query(CTask, CTag)
-        query = query.filter(CTask.id == pid)
-        query = query.join(CTagLink, CTagLink.ftask == CTask.fguid)
-        query = query.join(CTag, CTag.id == CTagLink.ftag)
-        data = query.all()
+        # *** Получим данные этой задачи из БД
+        data = self.get_task_data(pid)
+        # *** Выведем основные данные
         task: CTask = data[0][0]
+        context_index: int = self.comboBox_Contexts.findData(task.fcontext)  # noqa
+        self.comboBox_Contexts.setCurrentIndex(context_index)  # noqa
+        self.lineEdit_Name.setText(task.fname)  # noqa
+        self.textEdit_Description.setText(task.fdescription)  # noqa
+        self.comboBox_Urgencies.setCurrentIndex(task.furgency)  # noqa
+
+        # *** Займёмся тэгами. Вытащим их все и занесем в список.
+        tags: list = []
+        for task in data:
+
+            tags.append(task[1].fname)
+            # print("*** TE:LD:task ", task[1])
+
+        # *** Теперь. Переберем все чекбоксы тэгов на форме и выставим галочки в тех,
+        # *** на которые ссылается наша задача.
+        for check_box in self.check_box_list:
+
+            if check_box.text() in tags:
+
+                check_box.setCheckState(True)
+
+        #     tags.append(tag.fname)
+        # print("*** TE:LD:tgs ", tags)
+        # print("*** TE:LD:dt1 ", data[0][0])
+        # print("="*20)
+        # print("*** TE:LD:dt2 ", data[0][1])
+        # print("="*20)
+        # print("*** TE:LD:dt3 ", data[1][0])
+
         # tags: [] = data[1]
         # print(data[0][1])
         # print("-"*20)
@@ -109,23 +140,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         # print(task.fstatus)
         # print(task.fcontext)
         # print("="*20)
-        # ToDo: вот тут надо узнать, как получить данные
-        # print("*** TE:LD:curdat", self.comboBox_Contexts.currentData())
-        context_index: int = self.comboBox_Contexts.findData(task.fcontext)  # noqa
-        self.comboBox_Contexts.setCurrentIndex(context_index)
 
-        # self.comboBox_Contexts.setCurrentIndex(context_index)  # noqa
-        self.lineEdit_Name.setText(task.fname)  # noqa
-        self.textEdit_Description.setText(task.fdescription)  # noqa
-        self.comboBox_Urgencies.setCurrentIndex(task.furgency)  # noqa
-        tags: list = []
-        # print("*** TE:LD:dt1 ", data[0][0])
-        # print("="*20)
-        # print("*** TE:LD:dt2 ", data[0][1])
-        # print("="*20)
-        # print("*** TE:LD:dt3 ", data[1][0])
-        for task in data:
-
-            print("*** TE:LD:task ", task[1])
-        #     tags.append(tag.fname)
-        # print("*** TE:LD:tgs ", tags)
+    def load_tag_list(self):
+        """Загружает список меток из базы."""
+        return self.database.get_session().query(CTag.fname).all()
