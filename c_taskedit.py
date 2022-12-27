@@ -57,6 +57,8 @@ class CTaskEdit(QtWidgets.QMainWindow):
 
     def button_ok(self):
         """Обработчик нажатия кнопки 'Ok'"""
+        self.save_data()
+        """
         tag_list: list = []
         for checkbox in self.check_box_list:
 
@@ -65,7 +67,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
                 tag_list.append(checkbox.text())
         self.parent.update_tag_line(" ".join(tag_list))
         self.close()
-
+        """
 
     def fill_context_list(self):
         """Загружает список тэгов из базы."""
@@ -144,3 +146,15 @@ class CTaskEdit(QtWidgets.QMainWindow):
     def load_tag_list(self):
         """Загружает список меток из базы."""
         return self.database.get_session().query(CTag.fname).all()
+
+    def save_data(self):
+        """Сохраняет измененные данные в БД."""
+        # *** 1. Контекст
+        context_index: int = self.comboBox_Contexts.getCurrentIndex()  # noqa
+        # *** 2. Срочность
+        urgency_index: int = self.comboBox_Urgency.getCurrentIndex()  # noqa
+        # *** 3. Название
+        name_text: str = self.lineEdit_Name.Text()  # noqa
+        # *** 4. Описание
+        description_text: str = self.textEdit_Description.Text()  # noqa
+        # *** 5. Теги
