@@ -34,6 +34,7 @@ class CTaskEdit(QtWidgets.QMainWindow):
         self.parent = pparent
         self.database = pdatabase
         self.application_folder: Path = papplication_folder
+        self.id: int = 0
         # *** Грузим интерфейс
         uic_path: Path = self.application_folder / "ui" / "task_edit.ui"
         uic.loadUi(uic_path, self)
@@ -157,4 +158,15 @@ class CTaskEdit(QtWidgets.QMainWindow):
         name_text: str = self.lineEdit_Name.Text()  # noqa
         # *** 4. Описание
         description_text: str = self.textEdit_Description.Text()  # noqa
-        # *** 5. Теги
+        # *** 5. Сохраняем данные в базе
+        # *** 6. Теги
+        # * 6.1 Получим список ID и названий тэгов, ассоциированных с этой записью из БД. l1
+        data = self.get_task_data(self.id)
+        tags: list = []
+        for task in data:
+            tags.append(task[1].fname)
+
+        # * 6.2 Получим список ID и названий тэгов, выбранных в окне редактирования. l2
+        # * 6.3 Сравниваем l1 с l2. если чего-то не находим в l2 - удаляем из l1
+        # * 6.4 Сравниваем l2 с l1. если чего-то не находим в l1 - добавляем в бд
+        # * 6.5 Вуаля, теги синхронизированы.

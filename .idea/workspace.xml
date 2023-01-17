@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5099b318-03d6-4ce2-b7d2-5fcce796d78f" name="Changes" comment="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()">
+    <list default="true" id="5099b318-03d6-4ce2-b7d2-5fcce796d78f" name="Changes" comment="Сохранение данных задачи">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c_taskedit.py" beforeDir="false" afterPath="$PROJECT_DIR$/c_taskedit.py" afterDir="false" />
     </list>
@@ -103,7 +103,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667915807498</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Сохранение данных задачи">
+      <created>1672134212167</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1672134212167</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -124,6 +131,7 @@
     <MESSAGE value="Привёл в порядок форму редактирования задачи и выпадающий список срочности" />
     <MESSAGE value="Сделал-таки джойн меток к задаче, разгребаю выхлоп" />
     <MESSAGE value="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()" />
-    <option name="LAST_COMMIT_MESSAGE" value="Состояние комбо контекстов сохраняется при выходе + работа с тэгами в CTask.load_data()" />
+    <MESSAGE value="Сохранение данных задачи" />
+    <option name="LAST_COMMIT_MESSAGE" value="Сохранение данных задачи" />
   </component>
 </project>
